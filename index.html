@@ -130,6 +130,8 @@ button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px
 .notif { background: #0f1719a6; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-radius: 20px; padding: 12px 14px; display: flex; gap: 12px; align-items: center; color: #eef5f3; }
 .notif .ic { width: 34px; height: 34px; border-radius: 10px; flex: none; display: grid; place-items: center; }
 .notif .ic svg { width: 20px; height: 20px; }
+.notif .ic.art { background: none; }
+.notif .ic.art svg { width: 100%; height: 100%; display: block; }
 .notif b { display: block; font-size: 13px; }
 .notif span { font-size: 13px; color: #c4d6d2; }
 #lock .hint { margin: 18px 0 30px; font-size: 13px; opacity: .85; display: flex; flex-direction: column; align-items: center; gap: 8px; animation: bob 2s ease-in-out infinite; }
@@ -151,9 +153,11 @@ button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px
 .widget .ww span { font-size: 12px; color: var(--os-dim); }
 .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px 8px; align-content: start; }
 .app-icon { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 500; color: #fff; text-shadow: 0 1px 3px #0009; }
-.app-icon .tile { width: 58px; height: 58px; border-radius: 18px; display: grid; place-items: center; box-shadow: 0 6px 14px -6px #0009, inset 0 1px 0 #ffffff40; transition: transform .15s; }
+.app-icon .tile { width: 60px; height: 60px; border-radius: 25%; display: block; box-shadow: 0 8px 16px -8px #000a; transition: transform .15s; }
 .app-icon:active .tile { transform: scale(.88); }
-.app-icon .tile svg { width: 30px; height: 30px; }
+.app-icon .tile svg { width: 100%; height: 100%; display: block; }
+.app-icon:hover .tile { transform: translateY(-2px); }
+.app-icon:active .tile { transform: scale(.88); }
 .app-icon .lbl { max-width: 76px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dock { margin-top: auto; margin-bottom: 34px; padding: 12px; border-radius: 30px; background: #ffffff26; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .dock .lbl { display: none; }
@@ -183,8 +187,8 @@ button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px
 #recents .cards { flex: 1; display: flex; gap: 16px; overflow-x: auto; padding: 0 40px; align-items: center; scroll-snap-type: x mandatory; }
 #recents .card { flex: none; width: 70%; height: 85%; border-radius: 26px; background: var(--os-bg); scroll-snap-align: center; display: flex; flex-direction: column; overflow: hidden; position: relative; box-shadow: 0 20px 40px #0008; transition: transform .25s, opacity .25s; }
 #recents .card .ch { display: flex; align-items: center; gap: 10px; padding: 14px; font-weight: 600; }
-#recents .card .ch .tile { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; }
-#recents .card .ch .tile svg { width: 16px; height: 16px; }
+#recents .card .ch .tile { width: 30px; height: 30px; }
+#recents .card .ch .tile svg { width: 100%; height: 100%; display: block; }
 #recents .card .cprev { flex: 1; margin: 0 14px 14px; border-radius: 16px; background: var(--os-card); display: grid; place-items: center; color: var(--os-dim); font-size: 13px; }
 #recents .card .x { position: absolute; top: 10px; right: 10px; }
 #recents .empty { color: #c4d6d2; text-align: center; margin: auto; }
@@ -381,6 +385,29 @@ input[type=range] { width: 100%; accent-color: var(--jade); }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="ni-phone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6df3a6"/><stop offset="1" stop-color="#17a356"/></linearGradient>
+    <linearGradient id="ni-msg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#55ecc6"/><stop offset="1" stop-color="#0f7f69"/></linearGradient>
+    <linearGradient id="ni-explore" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#63c3e8"/><stop offset="1" stop-color="#184a78"/></linearGradient>
+    <linearGradient id="ni-settings" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9aabaf"/><stop offset="1" stop-color="#35444a"/></linearGradient>
+    <linearGradient id="ni-gear" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d6e0e2"/></linearGradient>
+    <linearGradient id="ni-calc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3d494d"/><stop offset="1" stop-color="#111719"/></linearGradient>
+    <linearGradient id="ni-notes" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#f6ecd2"/></linearGradient>
+    <linearGradient id="ni-clock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b373d"/><stop offset="1" stop-color="#090d0f"/></linearGradient>
+    <linearGradient id="ni-weather" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#74cff0"/><stop offset="1" stop-color="#2766ad"/></linearGradient>
+    <radialGradient id="ni-sun" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#fff1a8"/><stop offset=".6" stop-color="#ffcf4a"/><stop offset="1" stop-color="#f59a23"/></radialGradient>
+    <linearGradient id="ni-cloud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dbe9f5"/></linearGradient>
+    <linearGradient id="ni-gallery" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e9eef0"/></linearGradient>
+    <linearGradient id="ni-music" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff86a4"/><stop offset="1" stop-color="#9c2b52"/></linearGradient>
+    <radialGradient id="ni-vinyl" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#2a2a33"/><stop offset="1" stop-color="#0c0c10"/></radialGradient>
+    <linearGradient id="ni-snake" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9f78a"/><stop offset="1" stop-color="#36a85a"/></linearGradient>
+    <linearGradient id="ni-files" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#86b2ff"/><stop offset="1" stop-color="#2f4fa8"/></linearGradient>
+    <linearGradient id="ni-folder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d3e0ff"/></linearGradient>
+    <linearGradient id="ni-gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <filter id="ni-sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="1.2" stdDeviation="1.2" flood-color="#000" flood-opacity=".28"/></filter>
+  </defs>
+</svg>
 
 <aside class="side">
   <div class="ver">Версия 1.0 · «Аврора»</div>
@@ -526,6 +553,27 @@ const I = {
   doc: '<svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/></svg>',
 };
 
+/* ---------- app icons (full-tile artwork, 60×60) ---------- */
+const tileSvg = (bg, inner) => `<svg viewBox="0 0 60 60" aria-hidden="true"><rect width="60" height="60" rx="15" fill="url(#${bg})"/>${inner}<rect width="60" height="60" rx="15" fill="url(#ni-gloss)"/><rect x=".5" y=".5" width="59" height="59" rx="14.5" fill="none" stroke="#fff" stroke-opacity=".18"/></svg>`;
+const petals = ["#ff6b5b","#f7a23c","#ffd84d","#7fdc6a","#2fc6a0","#45a8d8","#6b7cf0","#c26be8"]
+  .map((c, i) => `<ellipse cx="30" cy="19.5" rx="6.2" ry="10.5" fill="${c}" fill-opacity=".86" transform="rotate(${i * 45} 30 30)"/>`).join("");
+const clockTicks = Array.from({ length: 12 }, (_, i) => `<line x1="30" y1="12.5" x2="30" y2="${i % 3 ? 15 : 16.5}" stroke="#1b2326" stroke-width="${i % 3 ? 1.4 : 2.2}" stroke-linecap="round" transform="rotate(${i * 30} 30 30)"/>`).join("");
+const APP_SVG = {
+  phone: tileSvg("ni-phone", `<g filter="url(#ni-sh)"><path transform="translate(13.6 13.6) scale(1.37)" fill="#fff" d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></g>`),
+  messages: tileSvg("ni-msg", `<g filter="url(#ni-sh)"><rect x="21" y="12" width="28" height="20" rx="10" fill="#fff" fill-opacity=".5"/><path d="M21.5 21h19a10 10 0 0 1 0 20H26l-7 5.5 1.6-6.4A10 10 0 0 1 21.5 21z" fill="#fff"/><circle cx="24" cy="31" r="2.2" fill="#14806b"/><circle cx="31" cy="31" r="2.2" fill="#14806b"/><circle cx="38" cy="31" r="2.2" fill="#14806b"/></g>`),
+  browser: tileSvg("ni-explore", `<g filter="url(#ni-sh)"><circle cx="30" cy="30" r="19" fill="#fff" fill-opacity=".14" stroke="#fff" stroke-width="2.6"/>${[0,90,180,270].map(a => `<line x1="30" y1="13.5" x2="30" y2="17" stroke="#fff" stroke-width="2" stroke-linecap="round" transform="rotate(${a} 30 30)"/>`).join("")}<g transform="rotate(40 30 30)"><path d="M30 15.5 35 30H25z" fill="#ff6b5b"/><path d="M30 44.5 35 30H25z" fill="#fff"/></g><circle cx="30" cy="30" r="2.6" fill="#184a78" stroke="#fff" stroke-width="1.5"/></g>`),
+  settings: tileSvg("ni-settings", `<g filter="url(#ni-sh)"><circle cx="30" cy="30" r="16.5" fill="none" stroke="url(#ni-gear)" stroke-width="7" stroke-dasharray="6.48 6.48" transform="rotate(-11 30 30)"/><circle cx="30" cy="30" r="13.5" fill="url(#ni-gear)"/><circle cx="30" cy="30" r="5.8" fill="#4a5a60"/><circle cx="30" cy="30" r="9.5" fill="none" stroke="#9aabaf" stroke-width="1.2"/></g>`),
+  calc: tileSvg("ni-calc", `<rect x="11" y="10" width="38" height="11" rx="3.5" fill="#2fc6a0" fill-opacity=".9"/><text x="45.5" y="18.6" text-anchor="end" font-family="Onest, sans-serif" font-weight="700" font-size="8.5" fill="#04211a">128</text>${[27,36.5,46].map(y => [16,25.5,35].map(x => `<circle cx="${x}" cy="${y}" r="3.6" fill="#fff" fill-opacity=".88"/>`).join("") + `<circle cx="44.5" cy="${y}" r="3.6" fill="#f2b13c"/>`).join("")}`),
+  notes: tileSvg("ni-notes", `<path d="M0 15A15 15 0 0 1 15 0h30a15 15 0 0 1 15 15v3H0z" fill="#f2b13c"/><path d="M0 18h60" stroke="#d8951e" stroke-width="1.2"/>${[27,34,41,48].map((y, i) => `<line x1="12" y1="${y}" x2="${i === 3 ? 34 : 48}" y2="${y}" stroke="${i ? "#e2d3a8" : "#8a6a20"}" stroke-width="2.2" stroke-linecap="round"/>`).join("")}<g filter="url(#ni-sh)" transform="rotate(-38 44 40)"><rect x="40.5" y="26" width="7" height="22" rx="1.5" fill="#ef6a5b"/><path d="M40.5 48h7L44 54z" fill="#f6d7a8"/><path d="M43 52.5h2L44 54z" fill="#333"/></g>`),
+  clock: tileSvg("ni-clock", `<g filter="url(#ni-sh)"><circle cx="30" cy="30" r="20" fill="#fbfcfb"/></g>${clockTicks}<line x1="30" y1="30" x2="22.5" y2="24.5" stroke="#1b2326" stroke-width="3.4" stroke-linecap="round"/><line x1="30" y1="30" x2="40" y2="17.5" stroke="#1b2326" stroke-width="2.4" stroke-linecap="round"/><line x1="30" y1="35" x2="30" y2="13.5" stroke="#f2a12c" stroke-width="1.3" stroke-linecap="round" transform="rotate(150 30 30)"/><circle cx="30" cy="30" r="2.4" fill="#f2a12c"/>`),
+  weather: tileSvg("ni-weather", `${Array.from({ length: 8 }, (_, i) => `<line x1="23" y1="7.5" x2="23" y2="10.5" stroke="#ffe27a" stroke-width="2" stroke-linecap="round" transform="rotate(${i * 45} 23 22)"/>`).join("")}<circle cx="23" cy="22" r="9" fill="url(#ni-sun)"/><g filter="url(#ni-sh)" fill="url(#ni-cloud)"><circle cx="25" cy="38" r="7.5"/><circle cx="35" cy="33" r="10"/><circle cx="44" cy="39" r="6.5"/><rect x="17.5" y="38" width="33" height="7.5" rx="3.75"/></g>`),
+  gallery: tileSvg("ni-gallery", `<g style="mix-blend-mode:multiply">${petals}</g><circle cx="30" cy="30" r="3.5" fill="#fff"/>`),
+  music: tileSvg("ni-music", `<g filter="url(#ni-sh)"><circle cx="26" cy="32" r="17" fill="url(#ni-vinyl)"/><circle cx="26" cy="32" r="13.5" fill="none" stroke="#fff" stroke-opacity=".1"/><circle cx="26" cy="32" r="10.5" fill="none" stroke="#fff" stroke-opacity=".1"/><path d="M14.5 24a14 14 0 0 1 8-6" stroke="#fff" stroke-opacity=".35" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="26" cy="32" r="6" fill="#ffd56b"/><circle cx="26" cy="32" r="1.5" fill="#0c0c10"/></g><g filter="url(#ni-sh)" fill="#fff"><rect x="45" y="11" width="2.8" height="25" rx="1.4"/><path d="M47.8 11c3 1.5 6 3.5 4.5 9-1-2.5-2.5-3.6-4.5-4z"/><ellipse cx="42.5" cy="36.5" rx="5.2" ry="4.2" transform="rotate(-20 42.5 36.5)"/></g>`),
+  snake: tileSvg("ni-snake", `${[0,1,2,3,4,5].map(i => `<line x1="${10 + i * 8}" y1="0" x2="${10 + i * 8}" y2="60" stroke="#fff" stroke-opacity=".12"/><line y1="${10 + i * 8}" x1="0" y2="${10 + i * 8}" x2="60" stroke="#fff" stroke-opacity=".12"/>`).join("")}<g filter="url(#ni-sh)"><path d="M12 45h17a6.5 6.5 0 0 0 0-13h-4a6.5 6.5 0 0 1 0-13h12" fill="none" stroke="#14593a" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="40" cy="19" r="6" fill="#14593a"/><circle cx="41.8" cy="17.2" r="1.7" fill="#fff"/><circle cx="42.2" cy="17" r=".8" fill="#111"/><circle cx="45" cy="41" r="5.5" fill="#ef4b3c"/><path d="M45 35.5c1-2.5 3-3 4.5-2.5-1 2.2-2.6 2.8-4.5 2.5z" fill="#2c8a3e"/></g>`),
+  files: tileSvg("ni-files", `<g filter="url(#ni-sh)"><path d="M10 18a4 4 0 0 1 4-4h9l4 4h19a4 4 0 0 1 4 4v20H10z" fill="#fff" fill-opacity=".45"/><rect x="15" y="20" width="30" height="16" rx="2" fill="#fff" transform="rotate(-4 30 28)"/><path d="M10 26a3.5 3.5 0 0 1 3.5-3.5h33A3.5 3.5 0 0 1 50 26v16a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4z" fill="url(#ni-folder)"/><rect x="24" y="32" width="12" height="2.4" rx="1.2" fill="#2f4fa8" fill-opacity=".35"/></g>`),
+};
+const NOTIF_APP = { msg: "messages", weather: "weather", info: "settings" };
+
 /* ---------- system state ---------- */
 const S = {
   wifi: store.get("wifi", true), bt: store.get("bt", false), plane: false, torch: false, dnd: false,
@@ -563,7 +611,7 @@ setInterval(() => {
 /* ---------- notifications ---------- */
 function notifEl(n) {
   return h("div", { class: "notif" },
-    h("div", { class: "ic", style: `background:${n.color}`, html: I[n.icon] }),
+    NOTIF_APP[n.icon] ? h("div", { class: "ic art", html: APP_SVG[NOTIF_APP[n.icon]] }) : h("div", { class: "ic", style: `background:${n.color}`, html: I[n.icon] }),
     h("div", {}, h("b", {}, n.title), h("span", {}, n.text)));
 }
 function renderNotifs() {
@@ -601,7 +649,7 @@ const byId = Object.fromEntries(APPS.map(a => [a.id, a]));
 let unread = { messages: 2 };
 
 function iconEl(app) {
-  const tile = h("div", { class: "tile", style: `background:${app.color}`, html: I[app.icon] });
+  const tile = h("div", { class: "tile", html: APP_SVG[app.id] });
   const b = h("button", { class: "app-icon", "data-app": app.id, "aria-label": app.name }, tile, h("span", { class: "lbl" }, app.name));
   b.addEventListener("click", () => openApp(app.id, tile));
   return b;
@@ -685,7 +733,7 @@ function openRecents() {
   [...stack].reverse().forEach(id => {
     const a = byId[id];
     const card = h("div", { class: "card" },
-      h("div", { class: "ch" }, h("div", { class: "tile", style: `background:${a.color}`, html: I[a.icon] }), a.name),
+      h("div", { class: "ch" }, h("div", { class: "tile", html: APP_SVG[a.id] }), a.name),
       h("div", { class: "cprev" }, "Нажмите, чтобы открыть"),
       h("button", { class: "iconbtn x", "aria-label": "Закрыть " + a.name, html: I.x, onclick: e => { e.stopPropagation(); card.style.transform = "translateY(-60px)"; card.style.opacity = 0; setTimeout(() => { killApp(id); openRecents(); }, 200); } }));
     card.addEventListener("click", () => openApp(id));
