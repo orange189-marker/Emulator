@@ -1,0 +1,1304 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Niri OS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Onest:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a single handset centred on a dark desk; on phones the handset becomes the whole screen. */
+:root {
+  --desk: #0d1214;
+  --desk-ink: #8fa3a0;
+  --jade: #2fc6a0;
+  --amber: #f2b13c;
+  --coral: #ef6a5b;
+  --os-bg: #0f1719;
+  --os-surface: #18242699;
+  --os-card: #1b2a2c;
+  --os-line: #ffffff1a;
+  --os-ink: #eef5f3;
+  --os-dim: #9db3af;
+  --f-display: "Unbounded", "Arial Black", system-ui, sans-serif;
+  --f-ui: "Onest", "Segoe UI", system-ui, -apple-system, sans-serif;
+  color-scheme: dark;
+}
+.screen[data-theme-os="light"] {
+  --os-bg: #eef3f1;
+  --os-surface: #ffffffb3;
+  --os-card: #ffffff;
+  --os-line: #0f17191a;
+  --os-ink: #102022;
+  --os-dim: #557070;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: radial-gradient(1200px 700px at 70% 10%, #16302c 0%, var(--desk) 60%);
+  color: var(--os-ink);
+  font-family: var(--f-ui);
+  display: flex; align-items: center; justify-content: center; gap: 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--jade); outline-offset: 2px; }
+
+/* ---------- side panel ---------- */
+.side { max-width: 280px; color: var(--desk-ink); display: flex; flex-direction: column; gap: 14px; }
+.side h1 { font-family: var(--f-display); font-weight: 800; font-size: 40px; line-height: 1; margin: 0; color: #eef5f3; letter-spacing: -0.02em; }
+.side h1 span { color: var(--jade); }
+.side p { margin: 0; line-height: 1.55; font-size: 14px; }
+.side .ver { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); }
+.side ul { margin: 0; padding-left: 18px; line-height: 1.7; font-size: 13px; }
+.side kbd { font-family: var(--f-ui); background: #ffffff14; border-radius: 4px; padding: 1px 6px; color: #eef5f3; }
+
+/* ---------- device ---------- */
+.device {
+  --w: 380px;
+  width: var(--w); height: calc(var(--w) * 2.08);
+  max-height: calc(100vh - 48px);
+  aspect-ratio: 1 / 2.08;
+  max-width: 100%;
+  border-radius: 54px; padding: 12px;
+  background: linear-gradient(145deg, #2c3a3b, #121a1b 40%, #263233);
+  box-shadow: 0 0 0 2px #3c4c4d, 0 40px 80px -20px #000c, inset 0 0 0 2px #0008;
+  position: relative; flex: none;
+}
+.device::before { /* side buttons */
+  content: ""; position: absolute; right: -4px; top: 150px; width: 4px; height: 70px; border-radius: 0 3px 3px 0; background: #2f3d3e;
+}
+.screen {
+  position: relative; width: 100%; height: 100%; border-radius: 44px; overflow: hidden;
+  background: var(--os-bg); color: var(--os-ink);
+  font-size: 14px; isolation: isolate;
+}
+.wallpaper { position: absolute; inset: 0; z-index: 0; transition: background .5s; }
+.punch { pointer-events: none; position: absolute; top: 12px; left: 50%; translate: -50% 0; width: 14px; height: 14px; border-radius: 50%; background: #000; z-index: 60; box-shadow: inset 0 0 0 3px #111b; }
+
+@media (max-width: 760px) { .side { display: none; } }
+@media (max-width: 500px) {
+  body { padding: 0; background: #000; }
+  .device { width: 100%; height: 100%; max-height: none; aspect-ratio: auto; border-radius: 0; padding: 0; box-shadow: none; background: #000; }
+  .device::before { display: none; }
+  .screen { border-radius: 0; }
+  .punch { display: none; }
+}
+
+/* ---------- status bar ---------- */
+.status {
+  position: absolute; top: 0; left: 0; right: 0; height: 40px; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between; padding: 6px 26px 0;
+  font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; pointer-events: none;
+  color: #fff; text-shadow: 0 1px 2px #0005;
+}
+.status.dark-ink { color: var(--os-ink); text-shadow: none; }
+.status .icons { display: flex; gap: 6px; align-items: center; }
+.status svg { width: 16px; height: 16px; fill: currentColor; }
+.battery { display: inline-flex; align-items: center; gap: 4px; }
+.battery i { display: block; width: 22px; height: 11px; border: 1.5px solid currentColor; border-radius: 3px; padding: 1px; position: relative; }
+.battery i::after { content: ""; position: absolute; right: -4px; top: 3px; width: 2px; height: 4px; background: currentColor; border-radius: 0 1px 1px 0; }
+.battery b { display: block; height: 100%; background: currentColor; border-radius: 1px; }
+.status-hit { position: absolute; top: 0; left: 0; right: 0; height: 40px; z-index: 55; cursor: s-resize; }
+
+/* ---------- layers ---------- */
+.layer { position: absolute; inset: 0; }
+#boot { z-index: 90; background: #050909; display: grid; place-items: center; transition: opacity .6s; }
+#boot .mark { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+#boot .logo { width: 84px; height: 84px; }
+#boot .name { font-family: var(--f-display); font-weight: 600; font-size: 22px; letter-spacing: .02em; color: #eef5f3; opacity: 0; animation: fade .8s .5s forwards; }
+#boot .bar { width: 120px; height: 3px; background: #ffffff1a; border-radius: 2px; overflow: hidden; opacity: 0; animation: fade .4s .9s forwards; }
+#boot .bar i { display: block; height: 100%; width: 0; background: var(--jade); animation: load 1.6s 1s ease-in-out forwards; }
+@keyframes fade { to { opacity: 1; } }
+@keyframes load { to { width: 100%; } }
+.logo path { stroke-dasharray: 300; stroke-dashoffset: 300; animation: draw 1.2s ease-out forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* lock */
+#lock { z-index: 40; display: flex; flex-direction: column; align-items: center; padding-top: 88px; color: #fff; transition: transform .45s cubic-bezier(.2,.8,.2,1), opacity .45s; cursor: grab; touch-action: none; }
+#lock.gone { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+#lock .ldate { font-size: 16px; font-weight: 500; opacity: .9; text-shadow: 0 1px 4px #0006; }
+#lock .ltime { font-family: var(--f-display); font-weight: 800; font-size: 92px; line-height: 1; letter-spacing: -0.04em; text-shadow: 0 2px 20px #0005; font-variant-numeric: tabular-nums; }
+#lock .lnotes { margin-top: auto; width: calc(100% - 32px); display: flex; flex-direction: column; gap: 8px; }
+.notif { background: #0f1719a6; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-radius: 20px; padding: 12px 14px; display: flex; gap: 12px; align-items: center; color: #eef5f3; }
+.notif .ic { width: 34px; height: 34px; border-radius: 10px; flex: none; display: grid; place-items: center; }
+.notif .ic svg { width: 20px; height: 20px; }
+.notif b { display: block; font-size: 13px; }
+.notif span { font-size: 13px; color: #c4d6d2; }
+#lock .hint { margin: 18px 0 30px; font-size: 13px; opacity: .85; display: flex; flex-direction: column; align-items: center; gap: 8px; animation: bob 2s ease-in-out infinite; }
+#lock .hint::before { content: ""; width: 120px; height: 5px; border-radius: 3px; background: #fff; }
+@keyframes bob { 50% { transform: translateY(-6px); } }
+
+/* home */
+#home { z-index: 10; display: flex; flex-direction: column; padding: 56px 18px 0; transition: transform .35s, filter .35s; }
+#home.behind { transform: scale(.92); filter: blur(6px) brightness(.7); }
+.widget {
+  background: var(--os-surface); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-radius: 26px; padding: 16px 18px; color: var(--os-ink);
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px; margin-bottom: 22px;
+}
+.widget .wt { font-family: var(--f-display); font-weight: 600; font-size: 38px; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.widget .wd { font-size: 13px; color: var(--os-dim); }
+.widget .ww { grid-row: 1 / span 2; grid-column: 2; text-align: right; }
+.widget .ww b { font-family: var(--f-display); font-size: 26px; font-weight: 600; display: block; }
+.widget .ww span { font-size: 12px; color: var(--os-dim); }
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px 8px; align-content: start; }
+.app-icon { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 500; color: #fff; text-shadow: 0 1px 3px #0009; }
+.app-icon .tile { width: 58px; height: 58px; border-radius: 18px; display: grid; place-items: center; box-shadow: 0 6px 14px -6px #0009, inset 0 1px 0 #ffffff40; transition: transform .15s; }
+.app-icon:active .tile { transform: scale(.88); }
+.app-icon .tile svg { width: 30px; height: 30px; }
+.app-icon .lbl { max-width: 76px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dock { margin-top: auto; margin-bottom: 34px; padding: 12px; border-radius: 30px; background: #ffffff26; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.dock .lbl { display: none; }
+.badge { position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; border-radius: 10px; background: var(--coral); color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; padding: 0 5px; text-shadow: none; }
+.tile { position: relative; }
+
+/* apps */
+#apps { z-index: 20; pointer-events: none; }
+.app {
+  position: absolute; inset: 0; background: var(--os-bg); color: var(--os-ink);
+  display: flex; flex-direction: column; padding-top: 40px;
+  transform-origin: var(--ox, 50%) var(--oy, 50%);
+  transition: transform .38s cubic-bezier(.2,.9,.2,1), opacity .3s, border-radius .38s;
+  pointer-events: auto;
+}
+.app.closed { transform: scale(.12); opacity: 0; pointer-events: none; border-radius: 40px; }
+.app header { display: flex; align-items: center; gap: 8px; padding: 8px 16px 12px; }
+.app header h2 { font-family: var(--f-display); font-weight: 600; font-size: 22px; margin: 0; letter-spacing: -0.01em; flex: 1; text-wrap: balance; }
+.app .body { flex: 1; overflow: auto; padding: 0 16px 60px; min-height: 0; }
+.app .body::-webkit-scrollbar { width: 0; }
+.iconbtn { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--os-card); }
+.iconbtn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* recents */
+#recents { z-index: 35; background: #000a; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; flex-direction: column; padding: 60px 0 70px; opacity: 0; pointer-events: none; transition: opacity .25s; }
+#recents.on { opacity: 1; pointer-events: auto; }
+#recents .cards { flex: 1; display: flex; gap: 16px; overflow-x: auto; padding: 0 40px; align-items: center; scroll-snap-type: x mandatory; }
+#recents .card { flex: none; width: 70%; height: 85%; border-radius: 26px; background: var(--os-bg); scroll-snap-align: center; display: flex; flex-direction: column; overflow: hidden; position: relative; box-shadow: 0 20px 40px #0008; transition: transform .25s, opacity .25s; }
+#recents .card .ch { display: flex; align-items: center; gap: 10px; padding: 14px; font-weight: 600; }
+#recents .card .ch .tile { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; }
+#recents .card .ch .tile svg { width: 16px; height: 16px; }
+#recents .card .cprev { flex: 1; margin: 0 14px 14px; border-radius: 16px; background: var(--os-card); display: grid; place-items: center; color: var(--os-dim); font-size: 13px; }
+#recents .card .x { position: absolute; top: 10px; right: 10px; }
+#recents .empty { color: #c4d6d2; text-align: center; margin: auto; }
+#recents .clear { align-self: center; margin-top: 16px; padding: 10px 18px; border-radius: 20px; background: #ffffff26; color: #fff; font-weight: 600; }
+
+/* control center */
+#cc { z-index: 45; overflow-y: auto; background: #0b1213cc; backdrop-filter: blur(24px) saturate(1.3); -webkit-backdrop-filter: blur(24px) saturate(1.3); padding: 56px 18px 20px; display: flex; flex-direction: column; gap: 14px; transform: translateY(-102%); transition: transform .38s cubic-bezier(.2,.9,.2,1); color: #eef5f3; }
+#cc.on { transform: none; }
+#cc .cct { display: flex; justify-content: space-between; align-items: baseline; }
+#cc .cct b { font-family: var(--f-display); font-size: 34px; font-weight: 600; font-variant-numeric: tabular-nums; }
+#cc .cct span { color: #9db3af; font-size: 13px; }
+.toggles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.tgl { border-radius: 22px; padding: 14px; background: #ffffff14; display: flex; align-items: center; gap: 10px; text-align: left; transition: background .2s, color .2s; }
+.tgl .ti { width: 36px; height: 36px; border-radius: 50%; background: #ffffff1f; display: grid; place-items: center; flex: none; }
+.tgl svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tgl b { display: block; font-size: 13px; }
+.tgl small { font-size: 11px; opacity: .75; }
+.tgl.on { background: var(--jade); color: #04211a; }
+.tgl.on .ti { background: #ffffff55; }
+.slider-row { background: #ffffff14; border-radius: 22px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
+input[type=range] { width: 100%; accent-color: var(--jade); }
+#cc .grab { width: 40px; height: 5px; border-radius: 3px; background: #ffffff55; align-self: center; margin-top: auto; }
+#cc .notes-title { font-size: 12px; text-transform: uppercase; letter-spacing: .12em; color: #9db3af; margin-top: 4px; }
+
+/* nav bar */
+.nav { position: absolute; left: 0; right: 0; bottom: 0; height: 30px; z-index: 70; display: flex; justify-content: center; align-items: center; }
+.nav button.homebar { width: 130px; height: 22px; display: grid; place-items: center; }
+.nav button.homebar::before { content: ""; width: 120px; height: 5px; border-radius: 3px; background: var(--hb, #fff); opacity: .9; }
+.navbtns { position: absolute; bottom: 30px; left: 50%; translate: -50% 0; z-index: 70; display: flex; gap: 6px; padding: 5px; border-radius: 22px; background: #0f1719b3; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); opacity: 0; pointer-events: none; transition: opacity .2s; }
+.navbtns.on { opacity: 1; pointer-events: auto; }
+.navbtns button { width: 40px; height: 32px; border-radius: 16px; display: grid; place-items: center; color: #eef5f3; }
+.navbtns button:hover { background: #ffffff1f; }
+.navbtns svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+#dim { position: absolute; inset: 0; z-index: 95; background: #000; pointer-events: none; opacity: 0; }
+#toast { position: absolute; top: 46px; left: 12px; right: 12px; z-index: 80; transform: translateY(-140%); transition: transform .4s cubic-bezier(.2,.9,.2,1); }
+#toast.on { transform: none; }
+
+/* ---------- shared app ui ---------- */
+.list { display: flex; flex-direction: column; background: var(--os-card); border-radius: 20px; overflow: hidden; }
+.row { display: flex; align-items: center; gap: 12px; padding: 13px 16px; text-align: left; width: 100%; }
+.row + .row { border-top: 1px solid var(--os-line); }
+.row .ri { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; flex: none; color: #fff; }
+.row .ri svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.row .rt { flex: 1; min-width: 0; }
+.row .rt b { display: block; font-weight: 500; }
+.row .rt small { color: var(--os-dim); font-size: 12px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .rv { color: var(--os-dim); font-size: 13px; }
+.section-t { font-size: 12px; text-transform: uppercase; letter-spacing: .12em; color: var(--os-dim); margin: 20px 4px 8px; }
+.switch { width: 46px; height: 28px; border-radius: 14px; background: var(--os-line); position: relative; transition: background .2s; flex: none; }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: left .2s; box-shadow: 0 1px 3px #0004; }
+.switch.on { background: var(--jade); }
+.switch.on::after { left: 21px; }
+.pill { padding: 8px 14px; border-radius: 18px; background: var(--os-card); font-weight: 500; font-size: 13px; }
+.pill.on { background: var(--jade); color: #04211a; }
+.pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.primary { background: var(--jade); color: #04211a; font-weight: 600; border-radius: 18px; padding: 12px 18px; }
+
+/* calculator */
+.calc { display: flex; flex-direction: column; height: 100%; }
+.calc .disp { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; padding: 8px 6px 16px; gap: 4px; min-height: 120px; }
+.calc .expr { color: var(--os-dim); font-size: 18px; min-height: 22px; word-break: break-all; text-align: right; }
+.calc .res { font-family: var(--f-display); font-size: 52px; font-weight: 400; letter-spacing: -0.03em; word-break: break-all; text-align: right; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.keys button { aspect-ratio: 1; border-radius: 50%; background: var(--os-card); font-size: 24px; font-weight: 500; transition: filter .1s; }
+.keys button:active { filter: brightness(1.4); }
+.keys .op { background: var(--amber); color: #2b1c00; }
+.keys .fn { background: var(--os-line); }
+.keys .wide { aspect-ratio: auto; grid-column: span 2; border-radius: 40px; }
+
+/* dialer */
+.dial-num { font-family: var(--f-display); font-size: 30px; text-align: center; min-height: 44px; margin: 20px 0 10px; letter-spacing: .04em; word-break: break-all; }
+.dialpad { display: grid; grid-template-columns: repeat(3, 72px); gap: 14px 22px; justify-content: center; }
+.dialpad button { width: 72px; height: 72px; border-radius: 50%; background: var(--os-card); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+.dialpad button b { font-size: 28px; font-weight: 500; }
+.dialpad button small { font-size: 9px; letter-spacing: .15em; color: var(--os-dim); margin-top: 3px; }
+.callbtn { width: 72px; height: 72px; border-radius: 50%; background: #2fbf6b; display: grid; place-items: center; margin: 18px auto 0; color: #fff; }
+.callbtn.end { background: var(--coral); }
+.callbtn svg { width: 30px; height: 30px; fill: currentColor; }
+.calling { position: absolute; inset: 0; background: linear-gradient(#123a33, #071312); color: #fff; z-index: 5; display: flex; flex-direction: column; align-items: center; padding: 100px 20px 60px; gap: 6px; }
+.calling .av { width: 96px; height: 96px; border-radius: 50%; background: var(--jade); display: grid; place-items: center; font-family: var(--f-display); font-size: 36px; color: #04211a; margin-bottom: 16px; }
+.calling h3 { margin: 0; font-size: 26px; font-weight: 600; }
+.calling p { margin: 0; color: #9db3af; font-variant-numeric: tabular-nums; }
+
+/* messages */
+.chat { display: flex; flex-direction: column; gap: 8px; padding: 6px 0 10px; }
+.bubble { max-width: 78%; padding: 9px 13px; border-radius: 18px; line-height: 1.4; font-size: 14px; animation: pop .25s ease-out; user-select: text; }
+.bubble.in { background: var(--os-card); align-self: flex-start; border-bottom-left-radius: 6px; }
+.bubble.out { background: var(--jade); color: #04211a; align-self: flex-end; border-bottom-right-radius: 6px; }
+.bubble.typing { color: var(--os-dim); }
+@keyframes pop { from { transform: scale(.9); opacity: 0; } }
+.composer { display: flex; gap: 8px; padding: 8px 12px 40px; border-top: 1px solid var(--os-line); }
+.composer input { flex: 1; min-width: 0; border-radius: 20px; border: 0; padding: 10px 14px; background: var(--os-card); color: var(--os-ink); font: inherit; }
+.composer button { width: 40px; height: 40px; border-radius: 50%; background: var(--jade); color: #04211a; display: grid; place-items: center; flex: none; }
+.composer svg { width: 18px; height: 18px; fill: currentColor; }
+.quick { display: flex; gap: 6px; overflow-x: auto; padding: 0 12px 8px; }
+.quick button { flex: none; padding: 6px 12px; border-radius: 14px; border: 1px solid var(--os-line); font-size: 12.5px; }
+
+/* notes */
+.note-card { background: var(--os-card); border-radius: 18px; padding: 14px 16px; text-align: left; width: 100%; display: flex; flex-direction: column; gap: 4px; }
+.note-card b { font-weight: 600; }
+.note-card small { color: var(--os-dim); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.notes-list { display: flex; flex-direction: column; gap: 10px; }
+.editor { display: flex; flex-direction: column; gap: 10px; height: 100%; }
+.editor input, .editor textarea { background: transparent; border: 0; color: var(--os-ink); font: inherit; resize: none; user-select: text; }
+.editor input { font-family: var(--f-display); font-size: 22px; font-weight: 600; }
+.editor textarea { flex: 1; font-size: 15px; line-height: 1.55; min-height: 300px; }
+.fab { position: absolute; right: 20px; bottom: 50px; width: 56px; height: 56px; border-radius: 18px; background: var(--amber); color: #2b1c00; display: grid; place-items: center; box-shadow: 0 8px 20px #0006; }
+.fab svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+
+/* clock */
+.bigclock { display: grid; place-items: center; margin: 10px 0 20px; }
+.bigclock canvas { width: 220px; height: 220px; max-width: 100%; }
+.stopw { font-family: var(--f-display); font-size: 44px; text-align: center; font-variant-numeric: tabular-nums; margin: 20px 0; letter-spacing: -0.02em; }
+.btnrow { display: flex; gap: 12px; justify-content: center; }
+.btnrow button { width: 84px; height: 84px; border-radius: 50%; background: var(--os-card); font-weight: 600; }
+.btnrow button.go { background: #2fbf6b33; color: #4fe08b; }
+.btnrow button.stop { background: #ef6a5b33; color: var(--coral); }
+.laps { margin-top: 18px; }
+.laps .row { font-variant-numeric: tabular-nums; }
+.tabs { display: flex; background: var(--os-card); border-radius: 16px; padding: 4px; margin-bottom: 8px; }
+.tabs button { flex: 1; padding: 8px; border-radius: 12px; font-weight: 500; font-size: 13px; color: var(--os-dim); }
+.tabs button.on { background: var(--os-bg); color: var(--os-ink); }
+.world .row b { font-variant-numeric: tabular-nums; }
+
+/* weather */
+.wx { border-radius: 28px; padding: 22px; color: #fff; background: linear-gradient(160deg, #2b8fa0, #1b4a68); position: relative; overflow: hidden; }
+.wx .city { font-size: 18px; font-weight: 600; }
+.wx .temp { font-family: var(--f-display); font-size: 80px; font-weight: 400; letter-spacing: -0.05em; line-height: 1; margin: 6px 0; }
+.wx .cond { opacity: .9; }
+.wx .sun { position: absolute; right: -20px; top: -20px; width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle, #ffd56b, #f2b13c00 70%); }
+.hours { display: flex; gap: 14px; overflow-x: auto; padding: 14px 4px; }
+.hours div { flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 13px; font-variant-numeric: tabular-nums; }
+.hours div span { color: var(--os-dim); font-size: 12px; }
+.days .row b { width: 40px; flex: none; }
+.days .tbar { flex: 1; height: 5px; border-radius: 3px; background: var(--os-line); position: relative; }
+.days .tbar i { position: absolute; top: 0; bottom: 0; border-radius: 3px; background: linear-gradient(90deg, var(--jade), var(--amber)); }
+.days .row .rv { width: 34px; text-align: right; font-variant-numeric: tabular-nums; }
+.sample { font-size: 11px; color: var(--os-dim); text-align: center; margin-top: 12px; }
+
+/* gallery */
+.photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; border-radius: 16px; overflow: hidden; }
+.photos canvas { width: 100%; aspect-ratio: 1; display: block; cursor: pointer; }
+.viewer { position: absolute; inset: 0; background: #000; z-index: 5; display: flex; flex-direction: column; justify-content: center; }
+.viewer canvas { width: 100%; height: auto; }
+.viewer .vbar { position: absolute; top: 46px; left: 16px; right: 16px; display: flex; justify-content: space-between; color: #fff; }
+
+/* music */
+.np { display: flex; flex-direction: column; align-items: center; gap: 14px; padding-top: 8px; }
+.cover { width: 220px; height: 220px; border-radius: 28px; max-width: 100%; display: grid; place-items: center; box-shadow: 0 20px 40px -10px #0008; position: relative; overflow: hidden; }
+.cover .disc { width: 70%; height: 70%; border-radius: 50%; background: repeating-radial-gradient(circle, #0003 0 2px, #0000 2px 5px); border: 2px solid #ffffff33; }
+.cover.spin .disc { animation: spin 4s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.np h3 { margin: 6px 0 0; font-size: 20px; font-weight: 600; }
+.np p { margin: 0; color: var(--os-dim); }
+.prog { width: 100%; height: 4px; border-radius: 2px; background: var(--os-line); overflow: hidden; }
+.prog i { display: block; height: 100%; width: 0; background: var(--jade); }
+.ctrls { display: flex; gap: 24px; align-items: center; }
+.ctrls button { width: 48px; height: 48px; display: grid; place-items: center; }
+.ctrls button.play { width: 68px; height: 68px; border-radius: 50%; background: var(--os-ink); color: var(--os-bg); }
+.ctrls svg { width: 26px; height: 26px; fill: currentColor; }
+
+/* snake */
+.snake-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.snake-wrap canvas { width: 100%; max-width: 320px; aspect-ratio: 1; border-radius: 20px; background: var(--os-card); touch-action: none; }
+.score { display: flex; justify-content: space-between; width: 100%; max-width: 320px; font-variant-numeric: tabular-nums; }
+.score b { font-family: var(--f-display); }
+.pad { display: grid; grid-template-columns: repeat(3, 56px); grid-template-rows: repeat(2, 48px); gap: 6px; }
+.pad button { background: var(--os-card); border-radius: 14px; font-size: 18px; }
+.pad .u { grid-column: 2; }
+.pad .l { grid-column: 1; grid-row: 2; }
+.pad .d { grid-column: 2; grid-row: 2; }
+.pad .r { grid-column: 3; grid-row: 2; }
+
+/* settings */
+.profile { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--os-card); border-radius: 20px; }
+.profile .av { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--jade), var(--amber)); display: grid; place-items: center; font-family: var(--f-display); font-weight: 600; color: #04211a; font-size: 20px; }
+.walls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.walls button { aspect-ratio: 9/16; border-radius: 12px; border: 2px solid transparent; }
+.walls button.on { border-color: var(--jade); }
+.about-hero { text-align: center; padding: 20px 0 10px; }
+.about-hero .logo { width: 64px; height: 64px; }
+.about-hero h3 { font-family: var(--f-display); font-size: 26px; margin: 10px 0 2px; }
+.about-hero p { margin: 0; color: var(--os-dim); }
+.storage { height: 10px; border-radius: 5px; background: var(--os-line); display: flex; overflow: hidden; margin: 10px 0 6px; }
+.storage i { display: block; height: 100%; }
+
+/* files */
+.crumbs { color: var(--os-dim); font-size: 13px; margin: 0 4px 10px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<aside class="side">
+  <div class="ver">Версия 1.0 · «Аврора»</div>
+  <h1>Niri<span>.</span>OS</h1>
+  <p>Мобильная операционная система, которая работает прямо в браузере. Разблокируйте экран и откройте любое приложение.</p>
+  <ul>
+    <li>Свайп вверх или клик по экрану блокировки, чтобы войти</li>
+    <li>Тяните строку состояния вниз, чтобы открыть пункт управления</li>
+    <li>Полоска внизу ведёт домой, кнопки над ней дают «Назад» и «Недавние»</li>
+    <li><kbd>Esc</kbd> назад, <kbd>H</kbd> домой, <kbd>R</kbd> недавние</li>
+  </ul>
+</aside>
+
+<div class="device" id="device">
+  <div class="screen" id="screen" data-theme-os="dark">
+    <div class="wallpaper" id="wallpaper"></div>
+    <div class="punch"></div>
+
+    <div class="status" id="status">
+      <span id="sbTime">00:00</span>
+      <span class="icons">
+        <svg id="sbWifi" viewBox="0 0 24 24"><path d="M12 20.5 1.5 8.3A15.7 15.7 0 0 1 12 4.5c4 0 7.7 1.4 10.5 3.8z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M2 21h3v-4H2zm5 0h3v-8H7zm5 0h3V9h-3zm5 0h3V3h-3z"/></svg>
+        <span class="battery"><span id="sbBatt">87</span><i><b id="sbBattBar" style="width:87%"></b></i></span>
+      </span>
+    </div>
+    <div class="status-hit" id="statusHit" title="Пункт управления"></div>
+
+    <div class="layer" id="home">
+      <div class="widget">
+        <div class="wt" id="wTime">00:00</div>
+        <div class="wd" id="wDate"></div>
+        <div class="ww"><b>+14°</b><span>Ясно</span></div>
+      </div>
+      <div class="grid" id="grid"></div>
+      <div class="dock" id="dock"></div>
+    </div>
+
+    <div class="layer" id="apps"></div>
+    <div class="layer" id="recents"><div class="cards" id="recentCards"></div><button class="clear" id="clearAll">Закрыть все</button></div>
+
+    <div class="layer" id="cc">
+      <div class="cct"><b id="ccTime">00:00</b><span id="ccDate"></span></div>
+      <div class="toggles" id="toggles"></div>
+      <div class="slider-row"><label for="bright">Яркость</label><input type="range" id="bright" min="20" max="100" value="100"></div>
+      <div class="slider-row"><label for="vol">Громкость</label><input type="range" id="vol" min="0" max="100" value="60"></div>
+      <div class="notes-title">Уведомления</div>
+      <div id="ccNotifs" style="display:flex;flex-direction:column;gap:8px"></div>
+      <button class="grab" id="ccClose" aria-label="Закрыть пункт управления"></button>
+    </div>
+
+    <div class="layer" id="lock">
+      <div class="ldate" id="lDate"></div>
+      <div class="ltime" id="lTime">00:00</div>
+      <div class="lnotes" id="lNotes"></div>
+      <div class="hint">Проведите вверх, чтобы открыть</div>
+    </div>
+
+    <div id="toast"></div>
+
+    <div class="navbtns" id="navbtns">
+      <button id="navBack" aria-label="Назад"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button id="navHome" aria-label="Домой"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/></svg></button>
+      <button id="navRecents" aria-label="Недавние"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="3"/></svg></button>
+    </div>
+    <div class="nav"><button class="homebar" id="homebar" aria-label="Домой"></button></div>
+
+    <div id="dim"></div>
+
+    <div class="layer" id="boot">
+      <div class="mark">
+        <svg class="logo" viewBox="0 0 84 84" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 66V18l48 48V18" stroke="#2fc6a0" stroke-width="8"/>
+          <path d="M66 18 18 66" stroke="#f2b13c" stroke-width="3" opacity=".8"/>
+        </svg>
+        <div class="name">Niri OS</div>
+        <div class="bar"><i></i></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const h = (tag, attrs = {}, ...kids) => {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") el.className = v;
+    else if (k === "html") el.innerHTML = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (k === "style") el.style.cssText = v;
+    else el.setAttribute(k, v);
+  }
+  for (const k of kids.flat()) if (k != null) el.append(k.nodeType ? k : document.createTextNode(k));
+  return el;
+};
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("niri:" + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem("niri:" + k, JSON.stringify(v)); } catch {} }
+};
+const pad = n => String(n).padStart(2, "0");
+const RU_DAYS = ["воскресенье","понедельник","вторник","среда","четверг","пятница","суббота"];
+const RU_MON = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+
+/* ---------- icons ---------- */
+const I = {
+  phone: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>',
+  msg: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-5 4V6a2 2 0 0 1 1-2z"/></svg>',
+  calc: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8.5 7.5h7M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/></svg>',
+  notes: '<svg viewBox="0 0 24 24" fill="none" stroke="#2b1c00" stroke-width="2.2" stroke-linecap="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h3"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  weather: '<svg viewBox="0 0 24 24" fill="#fff"><circle cx="9" cy="9" r="4" fill="#ffd56b"/><path d="M8 20a4 4 0 0 1 0-8 5 5 0 0 1 9.6 1.5A3.3 3.3 0 0 1 17 20z"/></svg>',
+  gallery: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m3 16 5-5 5 5 3-3 5 5"/><circle cx="16" cy="9" r="1.5" fill="#fff"/></svg>',
+  music: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M9 17V5l11-2v12"/><circle cx="6.5" cy="17.5" r="3"/><circle cx="17.5" cy="15.5" r="3"/><path d="M9 5l11-2v3L9 8z"/></svg>',
+  snake: '<svg viewBox="0 0 24 24" fill="none" stroke="#04211a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19h6a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h8"/><circle cx="18" cy="7" r="1.6" fill="#04211a"/></svg>',
+  settings: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>',
+  files: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
+  compass: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z" fill="#fff"/></svg>',
+  back: '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',
+  plus: '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  trash: '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
+  x: '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  send: '<svg viewBox="0 0 24 24"><path d="M3 20.5 21 12 3 3.5v6.6l12 1.9-12 1.9z"/></svg>',
+  play: '<svg viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z"/></svg>',
+  pause: '<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zm8 0h4v16h-4z"/></svg>',
+  next: '<svg viewBox="0 0 24 24"><path d="M5 5v14l10-7zm11 0h3v14h-3z"/></svg>',
+  prev: '<svg viewBox="0 0 24 24"><path d="M19 5v14L9 12zM5 5h3v14H5z"/></svg>',
+  wifi: '<svg viewBox="0 0 24 24"><path d="M2 8.5a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r="1"/></svg>',
+  bt: '<svg viewBox="0 0 24 24"><path d="m7 7 10 10-5 4V3l5 4L7 17"/></svg>',
+  plane: '<svg viewBox="0 0 24 24"><path d="M21 15.5 13 11V4.5a1.5 1.5 0 0 0-3 0V11l-8 4.5V17l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-4.5l8 2.5z"/></svg>',
+  torch: '<svg viewBox="0 0 24 24"><path d="M7 3h10v4l-3 4v10h-4V11L7 7z"/></svg>',
+  moon: '<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>',
+  bell: '<svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg>',
+  palette: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="8" cy="10" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16" cy="10" r="1"/></svg>',
+  sun: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/></svg>',
+  info: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>',
+  lock: '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+  battery: '<svg viewBox="0 0 24 24"><rect x="3" y="7" width="16" height="10" rx="2"/><path d="M21 10v4"/></svg>',
+  disk: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 15h.01M11 15h6"/></svg>',
+  folder: '<svg viewBox="0 0 24 24"><path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
+  doc: '<svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/></svg>',
+};
+
+/* ---------- system state ---------- */
+const S = {
+  wifi: store.get("wifi", true), bt: store.get("bt", false), plane: false, torch: false, dnd: false,
+  wall: store.get("wall", 0), theme: store.get("theme", "dark"), battery: 87,
+  notifications: [],
+};
+const WALLS = [
+  "radial-gradient(120% 80% at 20% 10%, #3fd6b0 0%, #0f6b62 35%, #0a2a30 70%, #071315 100%)",
+  "radial-gradient(90% 60% at 80% 20%, #ffb75e 0%, #d4583f 40%, #3a1830 80%, #12090f 100%)",
+  "linear-gradient(170deg, #b8e0d2 0%, #6aa9a3 35%, #2a5560 70%, #12262c 100%)",
+  "conic-gradient(from 210deg at 60% 40%, #1e3c40, #2fc6a0, #f2b13c, #ef6a5b, #1e3c40)",
+];
+const WALL_NAMES = ["Аврора", "Закат", "Туман", "Призма"];
+
+const screen = $("#screen");
+function applyWall() { $("#wallpaper").style.background = WALLS[S.wall]; }
+function applyTheme() { screen.dataset.themeOs = S.theme; }
+applyWall(); applyTheme();
+
+/* ---------- clock ---------- */
+function tick() {
+  const d = new Date();
+  const t = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  const ds = `${RU_DAYS[d.getDay()][0].toUpperCase() + RU_DAYS[d.getDay()].slice(1)}, ${d.getDate()} ${RU_MON[d.getMonth()]}`;
+  for (const id of ["sbTime", "lTime", "wTime", "ccTime"]) $("#" + id).textContent = t;
+  for (const id of ["lDate", "wDate", "ccDate"]) $("#" + id).textContent = ds;
+}
+tick(); setInterval(tick, 1000);
+setInterval(() => {
+  S.battery = Math.max(5, S.battery - 1);
+  $("#sbBatt").textContent = S.battery;
+  $("#sbBattBar").style.width = S.battery + "%";
+}, 90000);
+
+/* ---------- notifications ---------- */
+function notifEl(n) {
+  return h("div", { class: "notif" },
+    h("div", { class: "ic", style: `background:${n.color}`, html: I[n.icon] }),
+    h("div", {}, h("b", {}, n.title), h("span", {}, n.text)));
+}
+function renderNotifs() {
+  const ln = $("#lNotes"); ln.replaceChildren(...S.notifications.slice(0, 3).map(notifEl));
+  const cn = $("#ccNotifs");
+  cn.replaceChildren(...(S.notifications.length ? S.notifications.slice(0, 2).map(notifEl) : [h("div", { style: "color:#9db3af;font-size:13px" }, "Новых уведомлений нет")]));
+  updateBadges();
+}
+let toastT;
+function notify(n, show = true) {
+  S.notifications.unshift(n); renderNotifs();
+  if (!show || S.dnd) return;
+  const t = $("#toast"); const el = notifEl(n); el.style.cursor = "pointer";
+  el.addEventListener("click", () => { t.classList.remove("on"); if (n.app && unlocked) openApp(n.app); });
+  t.replaceChildren(el); t.classList.add("on");
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 3200);
+}
+
+/* ---------- app registry ---------- */
+const APPS = [
+  { id: "phone", name: "Телефон", color: "linear-gradient(145deg,#3ee08a,#1e9e57)", icon: "phone", dock: true, make: Phone },
+  { id: "messages", name: "Сообщения", color: "linear-gradient(145deg,#3fd6b0,#14806b)", icon: "msg", dock: true, make: Messages },
+  { id: "browser", name: "Обзор", color: "linear-gradient(145deg,#4aa6c8,#1d5c80)", icon: "compass", dock: true, make: Explore },
+  { id: "settings", name: "Настройки", color: "linear-gradient(145deg,#61757a,#2f3c40)", icon: "settings", dock: true, make: Settings },
+  { id: "calc", name: "Калькулятор", color: "linear-gradient(145deg,#424e52,#1d2427)", icon: "calc", make: Calculator },
+  { id: "notes", name: "Заметки", color: "linear-gradient(145deg,#ffd56b,#f2b13c)", icon: "notes", make: Notes },
+  { id: "clock", name: "Часы", color: "linear-gradient(145deg,#25313a,#0b1013)", icon: "clock", make: Clock },
+  { id: "weather", name: "Погода", color: "linear-gradient(145deg,#4fb5d0,#2369a0)", icon: "weather", make: Weather },
+  { id: "gallery", name: "Галерея", color: "linear-gradient(145deg,#ef8a5b,#c94a4a)", icon: "gallery", make: Gallery },
+  { id: "music", name: "Музыка", color: "linear-gradient(145deg,#ef6a8b,#a8325a)", icon: "music", make: Music },
+  { id: "snake", name: "Змейка", color: "linear-gradient(145deg,#b9f06b,#4fc66a)", icon: "snake", make: Snake },
+  { id: "files", name: "Файлы", color: "linear-gradient(145deg,#6b9cf0,#3a5fb0)", icon: "files", make: Files },
+];
+const byId = Object.fromEntries(APPS.map(a => [a.id, a]));
+let unread = { messages: 2 };
+
+function iconEl(app) {
+  const tile = h("div", { class: "tile", style: `background:${app.color}`, html: I[app.icon] });
+  const b = h("button", { class: "app-icon", "data-app": app.id, "aria-label": app.name }, tile, h("span", { class: "lbl" }, app.name));
+  b.addEventListener("click", () => openApp(app.id, tile));
+  return b;
+}
+function updateBadges() {
+  document.querySelectorAll(".app-icon").forEach(b => {
+    const tile = b.querySelector(".tile"); tile.querySelector(".badge")?.remove();
+    const n = unread[b.dataset.app]; if (n) tile.append(h("span", { class: "badge" }, String(n)));
+  });
+}
+$("#grid").append(...APPS.filter(a => !a.dock).map(iconEl));
+$("#dock").append(...APPS.filter(a => a.dock).map(iconEl));
+
+/* ---------- window manager ---------- */
+const running = new Map(); // id -> {el, api}
+const stack = [];
+let current = null;
+
+function openApp(id, fromEl) {
+  closeCC(); closeRecents();
+  const app = byId[id];
+  let r = running.get(id);
+  if (!r) {
+    const el = h("section", { class: "app closed", "aria-label": app.name });
+    const api = { el, app, back: null, onShow: null, onHide: null };
+    app.make(el, api);
+    $("#apps").append(el);
+    r = { el, api }; running.set(id, r);
+    el.offsetWidth; // reflow so the opening transition runs
+  }
+  if (fromEl) {
+    const sr = screen.getBoundingClientRect(), fr = fromEl.getBoundingClientRect();
+    r.el.style.setProperty("--ox", `${fr.left + fr.width / 2 - sr.left}px`);
+    r.el.style.setProperty("--oy", `${fr.top + fr.height / 2 - sr.top}px`);
+  }
+  if (current && current !== id) hideApp(current);
+  r.el.style.zIndex = 2;
+  requestAnimationFrame(() => r.el.classList.remove("closed"));
+  current = id;
+  const i = stack.indexOf(id); if (i >= 0) stack.splice(i, 1); stack.push(id);
+  $("#home").classList.add("behind");
+  if (unread[id]) { unread[id] = 0; updateBadges(); }
+  r.api.onShow?.();
+  syncChrome();
+}
+function hideApp(id) {
+  const r = running.get(id); if (!r) return;
+  r.el.classList.add("closed"); r.el.style.zIndex = 1; r.api.onHide?.();
+}
+function goHome() {
+  closeCC(); closeRecents();
+  if (current) hideApp(current);
+  current = null; $("#home").classList.remove("behind"); syncChrome();
+}
+function goBack() {
+  if ($("#cc").classList.contains("on")) return closeCC();
+  if ($("#recents").classList.contains("on")) return closeRecents();
+  if (!current) return;
+  const r = running.get(current);
+  if (r.api.back && r.api.back() === true) return;
+  goHome();
+}
+function killApp(id) {
+  const r = running.get(id); if (!r) return;
+  r.api.onHide?.(); r.api.onKill?.(); r.el.remove(); running.delete(id);
+  const i = stack.indexOf(id); if (i >= 0) stack.splice(i, 1);
+  if (current === id) { current = null; $("#home").classList.remove("behind"); }
+  syncChrome();
+}
+function syncChrome() {
+  const light = S.theme === "light" && current;
+  $("#status").classList.toggle("dark-ink", !!light);
+  screen.style.setProperty("--hb", light ? "#102022" : "#fff");
+}
+
+/* recents */
+function openRecents() {
+  closeCC();
+  const cards = $("#recentCards"); cards.replaceChildren();
+  if (!stack.length) cards.append(h("div", { class: "empty" }, "Нет недавних приложений"));
+  [...stack].reverse().forEach(id => {
+    const a = byId[id];
+    const card = h("div", { class: "card" },
+      h("div", { class: "ch" }, h("div", { class: "tile", style: `background:${a.color}`, html: I[a.icon] }), a.name),
+      h("div", { class: "cprev" }, "Нажмите, чтобы открыть"),
+      h("button", { class: "iconbtn x", "aria-label": "Закрыть " + a.name, html: I.x, onclick: e => { e.stopPropagation(); card.style.transform = "translateY(-60px)"; card.style.opacity = 0; setTimeout(() => { killApp(id); openRecents(); }, 200); } }));
+    card.addEventListener("click", () => openApp(id));
+    cards.append(card);
+  });
+  $("#recents").classList.add("on");
+}
+function closeRecents() { $("#recents").classList.remove("on"); }
+$("#clearAll").addEventListener("click", () => { [...running.keys()].forEach(killApp); closeRecents(); goHome(); });
+$("#recents").addEventListener("click", e => { if (e.target.id === "recents" || e.target.id === "recentCards") closeRecents(); });
+
+/* nav */
+$("#homebar").addEventListener("click", goHome);
+$("#navHome").addEventListener("click", goHome);
+$("#navBack").addEventListener("click", goBack);
+$("#navRecents").addEventListener("click", () => $("#recents").classList.contains("on") ? closeRecents() : openRecents());
+document.addEventListener("keydown", e => {
+  if (e.target.matches("input, textarea")) { if (e.key === "Escape") e.target.blur(); return; }
+  if (!unlocked) { if (e.key === "Enter" || e.key === " ") unlock(); return; }
+  if (e.key === "Escape") goBack();
+  else if (e.key === "h" || e.key === "р") goHome();
+  else if (e.key === "r" || e.key === "к") openRecents();
+});
+
+/* show nav buttons near the bottom while unlocked */
+let navT;
+screen.addEventListener("pointermove", e => {
+  if (!unlocked) return;
+  const r = screen.getBoundingClientRect();
+  if (e.clientY > r.bottom - 110) { $("#navbtns").classList.add("on"); clearTimeout(navT); navT = setTimeout(() => $("#navbtns").classList.remove("on"), 1800); }
+});
+screen.addEventListener("touchstart", e => {
+  if (!unlocked) return;
+  const r = screen.getBoundingClientRect();
+  if (e.touches[0].clientY > r.bottom - 90) { $("#navbtns").classList.add("on"); clearTimeout(navT); navT = setTimeout(() => $("#navbtns").classList.remove("on"), 2500); }
+}, { passive: true });
+
+/* ---------- control center ---------- */
+const TOGGLES = [
+  { k: "wifi", n: "Wi-Fi", i: "wifi", sub: on => on ? "Niri_Home_5G" : "Выключен" },
+  { k: "bt", n: "Bluetooth", i: "bt", sub: on => on ? "Наушники Niri Buds" : "Выключен" },
+  { k: "plane", n: "Авиарежим", i: "plane", sub: on => on ? "Включён" : "Выключен" },
+  { k: "torch", n: "Фонарик", i: "torch", sub: on => on ? "Светит" : "Выключен" },
+  { k: "dnd", n: "Не беспокоить", i: "moon", sub: on => on ? "Уведомления скрыты" : "Выключено" },
+  { k: "theme", n: "Тёмная тема", i: "sun", sub: on => on ? "Включена" : "Светлая тема", get: () => S.theme === "dark", set: v => { S.theme = v ? "dark" : "light"; store.set("theme", S.theme); applyTheme(); syncChrome(); } },
+];
+function renderToggles() {
+  $("#toggles").replaceChildren(...TOGGLES.map(t => {
+    const on = t.get ? t.get() : S[t.k];
+    return h("button", { class: "tgl" + (on ? " on" : ""), onclick: () => {
+      if (t.set) t.set(!on); else S[t.k] = !on;
+      if (t.k === "plane" && S.plane) { S.wifi = false; S.bt = false; }
+      if (t.k === "wifi" || t.k === "bt") store.set(t.k, S[t.k]);
+      if (t.k === "torch") screen.style.boxShadow = S.torch ? "0 0 60px 10px #fff8" : "";
+      $("#sbWifi").style.opacity = S.wifi ? 1 : .3;
+      renderToggles(); refreshSettings?.();
+    } }, h("span", { class: "ti", html: I[t.i] }), h("span", {}, h("b", {}, t.n), h("small", {}, t.sub(on))));
+  }));
+}
+let refreshSettings = null;
+renderToggles();
+function openCC() { if (unlocked) { renderToggles(); $("#cc").classList.add("on"); } }
+function closeCC() { $("#cc").classList.remove("on"); }
+$("#ccClose").addEventListener("click", closeCC);
+$("#bright").addEventListener("input", e => { $("#dim").style.opacity = (100 - e.target.value) / 100 * 0.75; });
+// pull down from status bar
+(() => {
+  let y0 = null;
+  const hit = $("#statusHit");
+  hit.addEventListener("pointerdown", e => { y0 = e.clientY; hit.setPointerCapture(e.pointerId); });
+  hit.addEventListener("pointerup", e => { if (y0 != null && e.clientY - y0 > -5) openCC(); y0 = null; });
+  let cy = null;
+  $("#cc").addEventListener("pointerdown", e => { if (!e.target.closest("button,input")) cy = e.clientY; });
+  $("#cc").addEventListener("pointerup", e => { if (cy != null && cy - e.clientY > 40) closeCC(); cy = null; });
+})();
+
+/* ---------- boot & lock ---------- */
+let unlocked = false;
+function unlock() {
+  if (unlocked) return;
+  unlocked = true; $("#lock").classList.add("gone");
+  setTimeout(() => notify({ icon: "msg", color: "linear-gradient(145deg,#3fd6b0,#14806b)", app: "messages", title: "Нири", text: "Привет! Загляни в Сообщения, расскажу про систему." }), 900);
+}
+function lockPhone() {
+  unlocked = false; goHome(); $("#lock").classList.remove("gone");
+}
+(() => {
+  const lock = $("#lock"); let y0 = null;
+  lock.addEventListener("pointerdown", e => { y0 = e.clientY; });
+  lock.addEventListener("pointermove", e => { if (y0 != null) { const dy = Math.min(0, e.clientY - y0); lock.style.transition = "none"; lock.style.transform = `translateY(${dy}px)`; lock.style.opacity = 1 + dy / 400; } });
+  const end = e => {
+    if (y0 == null) return;
+    const dy = e.clientY - y0; y0 = null;
+    lock.style.transition = ""; lock.style.transform = ""; lock.style.opacity = "";
+    if (dy < -60 || Math.abs(dy) < 6) unlock();
+  };
+  lock.addEventListener("pointerup", end);
+  lock.addEventListener("pointercancel", end);
+})();
+S.notifications.push(
+  { icon: "weather", color: "linear-gradient(145deg,#4fb5d0,#2369a0)", title: "Погода", text: "Сегодня ясно, до +17°" },
+  { icon: "msg", color: "linear-gradient(145deg,#3fd6b0,#14806b)", title: "Мама", text: "Позвони, как будет минутка" }
+);
+renderNotifs();
+setTimeout(() => { $("#boot").style.opacity = 0; setTimeout(() => $("#boot").remove(), 650); }, 2900);
+
+/* ---------- app helpers ---------- */
+function frame(el, api, title, extra) {
+  const backBtn = h("button", { class: "iconbtn", "aria-label": "Назад", html: I.back, onclick: goBack });
+  const hd = h("header", {}, backBtn, h("h2", {}, title), extra || null);
+  const body = h("div", { class: "body" });
+  el.append(hd, body);
+  return { hd, body, title: hd.querySelector("h2") };
+}
+
+/* ===== Phone ===== */
+function Phone(el, api) {
+  const { body } = frame(el, api, "Телефон");
+  let num = "";
+  const disp = h("div", { class: "dial-num" }, "");
+  const keys = [["1",""],["2","АБВГ"],["3","ДЕЖЗ"],["4","ИЙКЛ"],["5","МНОП"],["6","РСТУ"],["7","ФХЦЧ"],["8","ШЩЪЫ"],["9","ЬЭЮЯ"],["*",""],["0","+"],["#",""]];
+  const contacts = [["Мама", "+7 900 111-22-33"], ["Нири (поддержка)", "0800"], ["Саша", "+7 912 345-67-89"]];
+  const pad = h("div", { class: "dialpad" }, keys.map(([d, l]) => h("button", { onclick: () => { num += d; disp.textContent = num; beep(700 + (Number(d) || 0) * 40, .06); } }, h("b", {}, d), h("small", {}, l || " "))));
+  const recent = h("div", { class: "list", style: "margin-top:22px" }, contacts.map(([n, p]) =>
+    h("button", { class: "row", onclick: () => call(n) }, h("div", { class: "ri", style: "background:var(--jade)", html: I.phone }), h("div", { class: "rt" }, h("b", {}, n), h("small", {}, p)), h("span", { class: "rv" }, "Вызов"))));
+  const callBtn = h("button", { class: "callbtn", "aria-label": "Позвонить", html: I.phone.replace('fill="#fff"', ""), onclick: () => num && call(num) });
+  const del = h("button", { class: "pill", style: "display:block;margin:10px auto 0", onclick: () => { num = num.slice(0, -1); disp.textContent = num; } }, "Стереть");
+  body.append(disp, pad, callBtn, del, h("div", { class: "section-t" }, "Избранное"), recent);
+  let calling = null, ct;
+  function call(who) {
+    let s = 0;
+    const timer = h("p", {}, "Вызов…");
+    calling = h("div", { class: "calling" }, h("div", { class: "av" }, who[0]), h("h3", {}, who), timer,
+      h("button", { class: "callbtn end", style: "margin-top:auto", "aria-label": "Завершить", html: I.phone.replace('fill="#fff"', ""), onclick: end }));
+    el.append(calling);
+    ct = setInterval(() => { s++; timer.textContent = s < 3 ? "Вызов…" : `${pad2(Math.floor((s - 3) / 60))}:${pad2((s - 3) % 60)}`; }, 1000);
+  }
+  const pad2 = pad => String(pad).padStart(2, "0");
+  function end() { clearInterval(ct); calling?.remove(); calling = null; }
+  api.back = () => { if (calling) { end(); return true; } };
+  api.onKill = end;
+}
+
+/* ===== Messages ===== */
+function Messages(el, api) {
+  const { body, title } = frame(el, api, "Сообщения");
+  const threads = [
+    { id: "niri", name: "Нири", preview: "Привет! Я помогу освоиться.", color: "var(--jade)", msgs: [["in", "Привет! Я Нири, встроенный помощник Niri OS."], ["in", "Спроси меня что-нибудь: про систему, приложения или просто поболтаем."]] },
+    { id: "mom", name: "Мама", preview: "Позвони, как будет минутка", color: "var(--coral)", msgs: [["in", "Ты поел?"], ["out", "Да, всё хорошо"], ["in", "Позвони, как будет минутка"]] },
+    { id: "sasha", name: "Саша", preview: "Го в змейку на рекорд?", color: "var(--amber)", msgs: [["in", "Го в змейку на рекорд?"]] },
+  ];
+  const listView = h("div", { class: "list" });
+  let open = null;
+  function renderList() {
+    listView.replaceChildren(...threads.map(t => h("button", { class: "row", onclick: () => openThread(t) },
+      h("div", { class: "ri", style: `background:${t.color};border-radius:50%;color:#04211a;font-weight:700` }, t.name[0]),
+      h("div", { class: "rt" }, h("b", {}, t.name), h("small", {}, t.msgs[t.msgs.length - 1][1])))));
+  }
+  renderList(); body.append(listView);
+  const replies = [
+    [/привет|здрав|хай|hi/i, "Привет-привет! Как тебе Niri OS?"],
+    [/верси|что за|систем|ос\b|os/i, "Это Niri OS 1.0 «Аврора». В ней есть 12 приложений, пункт управления, недавние приложения, светлая и тёмная тема."],
+    [/игр|змей/i, "Открой «Змейку» на главном экране. Управление стрелками, свайпами или кнопками."],
+    [/обо|тем|фон|wallpaper/i, "Обои и тему меняют в Настройках → Оформление. Тему можно переключить и в пункте управления."],
+    [/как дела|как ты/i, "Отлично! Батарея в норме, все приложения работают."],
+    [/спасиб/i, "Всегда пожалуйста 💚"],
+    [/время|час/i, () => "Сейчас " + new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })],
+    [/музык|песн/i, "В «Музыке» четыре мелодии, синтезированные прямо в системе. Включи погромче!"],
+  ];
+  function answer(text) {
+    for (const [re, a] of replies) if (re.test(text)) return typeof a === "function" ? a() : a;
+    return ["Интересно! Расскажи подробнее.", "Записала. Попробуй спросить про версию системы или игры.", "Хм, я ещё учусь. Спроси про обои или музыку."][Math.floor(Math.random() * 3)];
+  }
+  function openThread(t) {
+    open = t; title.textContent = t.name;
+    const chat = h("div", { class: "chat" });
+    const draw = () => { chat.replaceChildren(...t.msgs.map(([d, m]) => h("div", { class: "bubble " + d }, m))); body.scrollTop = 1e6; };
+    draw();
+    body.replaceChildren(chat);
+    const input = h("input", { id: "msg-input", placeholder: "Сообщение", autocomplete: "off" });
+    const send = (txt) => {
+      txt = (txt ?? input.value).trim(); if (!txt) return;
+      t.msgs.push(["out", txt]); input.value = ""; draw();
+      const who = t.id === "niri" ? answer(txt) : t.id === "mom" ? "Хорошо, жду звонка ❤️" : "Ставлю рекорд 300, побей!";
+      const typing = h("div", { class: "bubble in typing" }, "печатает…");
+      setTimeout(() => { chat.append(typing); body.scrollTop = 1e6; }, 400);
+      setTimeout(() => { typing.remove(); t.msgs.push(["in", who]); draw(); if (current !== "messages" || open !== t) { unread.messages = (unread.messages || 0) + 1; notify({ icon: "msg", app: "messages", color: "linear-gradient(145deg,#3fd6b0,#14806b)", title: t.name, text: who }); } }, 1300);
+    };
+    const quick = t.id === "niri" ? h("div", { class: "quick" }, ["Что за система?", "Как сменить обои?", "Во что поиграть?", "Который час?"].map(q => h("button", { onclick: () => send(q) }, q))) : null;
+    const comp = h("form", { class: "composer", onsubmit: e => { e.preventDefault(); send(); } }, input, h("button", { "aria-label": "Отправить", html: I.send }));
+    el.querySelector(".composer")?.remove(); el.querySelector(".quick")?.remove();
+    if (quick) el.append(quick); el.append(comp);
+  }
+  api.back = () => {
+    if (!open) return;
+    open = null; title.textContent = "Сообщения"; renderList();
+    body.replaceChildren(listView); el.querySelector(".composer")?.remove(); el.querySelector(".quick")?.remove();
+    return true;
+  };
+}
+
+/* ===== Calculator ===== */
+function Calculator(el, api) {
+  const { body } = frame(el, api, "Калькулятор");
+  body.style.paddingBottom = "44px";
+  let expr = "", last = "0";
+  const ex = h("div", { class: "expr" }), res = h("div", { class: "res" }, "0");
+  const show = () => { ex.textContent = expr.replace(/\*/g, "×").replace(/\//g, "÷"); res.textContent = last; };
+  const evaluate = s => {
+    if (!/^[\d+\-*/.() %]+$/.test(s)) return null;
+    try { const v = Function(`"use strict";return (${s.replace(/%/g, "/100")})`)(); return Number.isFinite(v) ? +v.toPrecision(12) : null; } catch { return null; }
+  };
+  const press = k => {
+    if (k === "C") { expr = ""; last = "0"; }
+    else if (k === "⌫") expr = expr.slice(0, -1);
+    else if (k === "=") { const v = evaluate(expr); last = v == null ? "Ошибка" : String(v).replace(".", ","); expr = v == null ? "" : String(v); show(); return; }
+    else if (k === "±") expr = expr.startsWith("-") ? expr.slice(1) : "-" + expr;
+    else expr += k;
+    const v = evaluate(expr); if (v != null) last = String(v).replace(".", ",");
+    show();
+  };
+  const K = [["C","fn"],["±","fn"],["%","fn"],["/","op","÷"],["7"],["8"],["9"],["*","op","×"],["4"],["5"],["6"],["-","op","−"],["1"],["2"],["3"],["+","op","+"],["0","wide"],["."," ",","],["=","op"]];
+  const keys = h("div", { class: "keys" }, K.map(([k, c = "", lab]) => h("button", { class: c, onclick: () => press(k) }, lab || k)));
+  body.append(h("div", { class: "calc" }, h("div", { class: "disp" }, ex, res), keys));
+}
+
+/* ===== Notes ===== */
+function Notes(el, api) {
+  const { body, title } = frame(el, api, "Заметки");
+  let notes = store.get("notes", [
+    { id: 1, t: "Добро пожаловать", b: "Это заметки Niri OS. Они сохраняются в этом браузере.\n\nНажмите + чтобы создать новую.", d: Date.now() },
+    { id: 2, t: "Список покупок", b: "Хлеб\nМолоко\nЯблоки\nКофе", d: Date.now() - 86400000 },
+  ]);
+  let editing = null;
+  const save = () => store.set("notes", notes);
+  const fab = h("button", { class: "fab", "aria-label": "Новая заметка", html: I.plus, onclick: () => edit({ id: Date.now(), t: "", b: "", d: Date.now() }, true) });
+  const delBtn = h("button", { class: "iconbtn", "aria-label": "Удалить", html: I.trash, style: "display:none", onclick: () => { notes = notes.filter(n => n.id !== editing.id); save(); editing = null; list(); } });
+  el.querySelector("header").append(delBtn);
+  function list() {
+    editing = null; title.textContent = "Заметки"; delBtn.style.display = "none"; fab.style.display = "";
+    notes.sort((a, b) => b.d - a.d);
+    body.replaceChildren(h("div", { class: "notes-list" }, notes.length ? notes.map(n => h("button", { class: "note-card", onclick: () => edit(n) },
+      h("b", {}, n.t || "Без названия"), h("small", {}, (n.b.split("\n")[0] || "Пусто") + " · " + new Date(n.d).toLocaleDateString("ru-RU")))) : h("p", { style: "color:var(--os-dim);text-align:center" }, "Заметок пока нет")));
+  }
+  function edit(n, isNew) {
+    editing = n; if (isNew) notes.push(n);
+    title.textContent = ""; delBtn.style.display = ""; fab.style.display = "none";
+    const ti = h("input", { id: "note-title", placeholder: "Заголовок", value: n.t });
+    const tb = h("textarea", { id: "note-body", placeholder: "Начните писать…" }); tb.value = n.b;
+    const upd = () => { n.t = ti.value; n.b = tb.value; n.d = Date.now(); save(); };
+    ti.addEventListener("input", upd); tb.addEventListener("input", upd);
+    body.replaceChildren(h("div", { class: "editor" }, ti, tb));
+    if (isNew) setTimeout(() => ti.focus(), 400);
+  }
+  el.append(fab); list();
+  api.back = () => { if (editing) { if (!editing.t && !editing.b) { notes = notes.filter(x => x !== editing); save(); } list(); return true; } };
+}
+
+/* ===== Clock ===== */
+function Clock(el, api) {
+  const { body } = frame(el, api, "Часы");
+  const tabs = h("div", { class: "tabs" });
+  const view = h("div");
+  body.append(tabs, view);
+  let tab = "clock", raf, swStart = 0, swAcc = 0, swRun = false, laps = [];
+  const T = [["clock", "Часы"], ["world", "Мировое время"], ["sw", "Секундомер"]];
+  function renderTabs() { tabs.replaceChildren(...T.map(([k, n]) => h("button", { class: tab === k ? "on" : "", onclick: () => { tab = k; renderTabs(); draw(); } }, n))); }
+  const fmt = ms => `${pad(Math.floor(ms / 60000))}:${pad(Math.floor(ms / 1000) % 60)},${pad(Math.floor(ms / 10) % 100)}`;
+  function draw() {
+    cancelAnimationFrame(raf);
+    if (tab === "clock") {
+      const cv = h("canvas", { width: 440, height: 440 }); const dig = h("div", { class: "stopw", style: "margin:0" });
+      view.replaceChildren(h("div", { class: "bigclock" }, cv), dig);
+      const ctx = cv.getContext("2d");
+      const loop = () => {
+        const d = new Date(), cs = getComputedStyle(el);
+        const ink = cs.getPropertyValue("--os-ink").trim(), dim = cs.getPropertyValue("--os-dim").trim();
+        ctx.clearRect(0, 0, 440, 440); ctx.save(); ctx.translate(220, 220);
+        ctx.fillStyle = cs.getPropertyValue("--os-card").trim(); ctx.beginPath(); ctx.arc(0, 0, 210, 0, 7); ctx.fill();
+        for (let i = 0; i < 60; i++) { ctx.save(); ctx.rotate(i * Math.PI / 30); ctx.fillStyle = i % 5 ? dim : ink; ctx.fillRect(-1.5, -196, 3, i % 5 ? 8 : 18); ctx.restore(); }
+        const hand = (a, len, w, c) => { ctx.save(); ctx.rotate(a); ctx.strokeStyle = c; ctx.lineWidth = w; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(0, 20); ctx.lineTo(0, -len); ctx.stroke(); ctx.restore(); };
+        const s = d.getSeconds() + d.getMilliseconds() / 1000, m = d.getMinutes() + s / 60, hr = d.getHours() % 12 + m / 60;
+        hand(hr * Math.PI / 6, 110, 10, ink); hand(m * Math.PI / 30, 160, 7, ink); hand(s * Math.PI / 30, 180, 3, "#f2b13c");
+        ctx.fillStyle = "#f2b13c"; ctx.beginPath(); ctx.arc(0, 0, 8, 0, 7); ctx.fill(); ctx.restore();
+        dig.textContent = d.toLocaleTimeString("ru-RU");
+        raf = requestAnimationFrame(loop);
+      };
+      loop();
+    } else if (tab === "world") {
+      const cities = [["Москва", "Europe/Moscow"], ["Киев", "Europe/Kyiv"], ["Лондон", "Europe/London"], ["Нью-Йорк", "America/New_York"], ["Токио", "Asia/Tokyo"], ["Дубай", "Asia/Dubai"]];
+      const lst = h("div", { class: "list world" });
+      view.replaceChildren(lst);
+      const upd = () => {
+        lst.replaceChildren(...cities.map(([n, tz]) => {
+          let t = "—"; try { t = new Date().toLocaleTimeString("ru-RU", { timeZone: tz, hour: "2-digit", minute: "2-digit" }); } catch {}
+          return h("div", { class: "row" }, h("div", { class: "rt" }, h("b", {}, n), h("small", {}, tz.split("/")[1].replace("_", " "))), h("b", { style: "font-family:var(--f-display);font-size:24px" }, t));
+        }));
+      };
+      upd(); const iv = setInterval(() => tab === "world" ? upd() : clearInterval(iv), 5000);
+    } else {
+      const disp = h("div", { class: "stopw" }); const lapList = h("div", { class: "list laps" });
+      const a = h("button", {}), b = h("button", {});
+      const render = () => {
+        a.textContent = swRun ? "Круг" : "Сброс"; a.className = "";
+        b.textContent = swRun ? "Стоп" : "Старт"; b.className = swRun ? "stop" : "go";
+        lapList.style.display = laps.length ? "" : "none";
+        lapList.replaceChildren(...laps.map((l, i) => h("div", { class: "row" }, h("div", { class: "rt" }, "Круг " + (laps.length - i)), h("span", {}, fmt(l)))));
+      };
+      const now = () => swAcc + (swRun ? performance.now() - swStart : 0);
+      b.onclick = () => { if (swRun) { swAcc = now(); swRun = false; } else { swStart = performance.now(); swRun = true; } render(); };
+      a.onclick = () => { if (swRun) laps.unshift(now()); else { swAcc = 0; laps = []; } render(); disp.textContent = fmt(now()); };
+      view.replaceChildren(disp, h("div", { class: "btnrow" }, a, b), lapList);
+      render();
+      const loop = () => { disp.textContent = fmt(now()); raf = requestAnimationFrame(loop); }; loop();
+    }
+  }
+  renderTabs();
+  api.onShow = draw;
+  api.onHide = () => cancelAnimationFrame(raf);
+}
+
+/* ===== Weather ===== */
+function Weather(el, api) {
+  const { body } = frame(el, api, "Погода");
+  const cities = { "Москва": [14, "Ясно", 17, 6], "Киев": [16, "Переменная облачность", 18, 8], "Сочи": [21, "Солнечно", 24, 15] };
+  let city = "Москва";
+  const view = h("div"); body.append(view);
+  function draw() {
+    const [t, c, hi, lo] = cities[city];
+    const hours = Array.from({ length: 10 }, (_, i) => { const hr = (new Date().getHours() + i) % 24; const tt = Math.round(lo + (hi - lo) * Math.sin(Math.PI * Math.max(0, Math.min(1, (hr - 6) / 14)))); return h("div", {}, h("span", {}, i ? pad(hr) : "Сейчас"), h("b", {}, (i ? tt : t) + "°")); });
+    const days = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map((d, i) => { const l = lo - 3 + ((i * 7) % 5), u = hi - 2 + ((i * 3) % 5); return h("div", { class: "row" }, h("b", {}, d), h("span", { class: "rv" }, l + "°"), h("div", { class: "tbar" }, h("i", { style: `left:${(l - 0) * 3}%;right:${100 - u * 3.4}%` })), h("span", { class: "rv" }, u + "°")); });
+    view.replaceChildren(
+      h("div", { class: "pills", style: "margin-bottom:12px" }, Object.keys(cities).map(n => h("button", { class: "pill" + (n === city ? " on" : ""), onclick: () => { city = n; draw(); } }, n))),
+      h("div", { class: "wx" }, h("div", { class: "sun" }), h("div", { class: "city" }, city), h("div", { class: "temp" }, t + "°"), h("div", { class: "cond" }, `${c} · Макс ${hi}° Мин ${lo}°`)),
+      h("div", { class: "hours" }, hours),
+      h("div", { class: "section-t" }, "Прогноз на неделю"), h("div", { class: "list days" }, days),
+      h("p", { class: "sample" }, "Пример данных: Niri OS не подключена к метеосервису"));
+  }
+  draw();
+}
+
+/* ===== Gallery ===== */
+function Gallery(el, api) {
+  const { body } = frame(el, api, "Галерея");
+  const grid = h("div", { class: "photos" });
+  body.append(h("div", { class: "section-t", style: "margin-top:0" }, "Недавние · 18 фото"), grid);
+  const paint = (cv, seed) => {
+    const ctx = cv.getContext("2d"), W = cv.width, H = cv.height;
+    let s = seed * 9973; const rnd = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+    const hue = rnd() * 360;
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, `hsl(${hue},60%,${55 + rnd() * 20}%)`); g.addColorStop(1, `hsl(${(hue + 40) % 360},50%,${20 + rnd() * 15}%)`);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = `hsla(${(hue + 180) % 360},80%,85%,.9)`; ctx.beginPath(); ctx.arc(W * (.2 + rnd() * .6), H * (.15 + rnd() * .3), W * (.06 + rnd() * .08), 0, 7); ctx.fill();
+    for (let l = 0; l < 3; l++) {
+      ctx.fillStyle = `hsla(${(hue + 20 * l) % 360},40%,${30 - l * 8}%,.9)`; ctx.beginPath(); ctx.moveTo(0, H);
+      let y = H * (.55 + l * .12);
+      for (let x = 0; x <= W; x += W / 8) { y += (rnd() - .5) * H * .12; ctx.lineTo(x, y); }
+      ctx.lineTo(W, H); ctx.fill();
+    }
+  };
+  for (let i = 1; i <= 18; i++) {
+    const cv = h("canvas", { width: 200, height: 200, role: "button", "aria-label": "Фото " + i }); paint(cv, i);
+    cv.addEventListener("click", () => view(i)); grid.append(cv);
+  }
+  let viewer = null;
+  function view(i) {
+    const cv = h("canvas", { width: 720, height: 960 }); paint(cv, i);
+    viewer = h("div", { class: "viewer" }, cv, h("div", { class: "vbar" }, h("button", { class: "iconbtn", html: I.back, "aria-label": "Назад", onclick: close, style: "background:#ffffff26;color:#fff" }), h("span", {}, `Фото ${i} из 18`)));
+    el.append(viewer);
+  }
+  function close() { viewer?.remove(); viewer = null; }
+  api.back = () => { if (viewer) { close(); return true; } };
+}
+
+/* ===== Music (WebAudio synth) ===== */
+let AC = null;
+function audio() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch { return null; } } if (AC.state === "suspended") AC.resume(); return AC; }
+function beep(f, d) { const ac = audio(); if (!ac) return; const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = f; g.gain.value = .05 * $("#vol").value / 100; o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime + d); }
+function Music(el, api) {
+  const { body } = frame(el, api, "Музыка");
+  const tracks = [
+    { t: "Северное сияние", a: "Niri Sound", c: "linear-gradient(140deg,#2fc6a0,#12454a)", n: [64, 67, 71, 74, 71, 67, 69, 72, 76, 72, 69, 64], bpm: 110 },
+    { t: "Янтарный вечер", a: "Niri Sound", c: "linear-gradient(140deg,#f2b13c,#8a3b26)", n: [60, 64, 67, 72, 67, 64, 62, 65, 69, 74, 69, 65], bpm: 96 },
+    { t: "Коралловый риф", a: "Lo-Fi Niri", c: "linear-gradient(140deg,#ef6a5b,#5a1e3a)", n: [57, 60, 64, 60, 55, 59, 62, 59, 53, 57, 60, 57], bpm: 84 },
+    { t: "Пиксельный город", a: "8-bit Club", c: "linear-gradient(140deg,#6b9cf0,#1d2a5a)", n: [72, 72, 79, 79, 81, 81, 79, 0, 77, 77, 76, 76, 74, 74, 72, 0], bpm: 140, wave: "square" },
+  ];
+  let idx = 0, playing = false, timer = null, step = 0;
+  const cover = h("div", { class: "cover" }, h("div", { class: "disc" }));
+  const tt = h("h3"), ta = h("p"), prog = h("i");
+  const playBtn = h("button", { class: "play", "aria-label": "Играть" });
+  const lst = h("div", { class: "list", style: "width:100%;margin-top:10px" });
+  body.append(h("div", { class: "np" }, cover, tt, ta, h("div", { class: "prog" }, prog),
+    h("div", { class: "ctrls" }, h("button", { "aria-label": "Предыдущий", html: I.prev, onclick: () => go(-1) }), playBtn, h("button", { "aria-label": "Следующий", html: I.next, onclick: () => go(1) })), lst));
+  const note = (m, dur, wave) => {
+    const ac = audio(); if (!ac || !m) return;
+    const o = ac.createOscillator(), g = ac.createGain(), t0 = ac.currentTime;
+    o.type = wave || "triangle"; o.frequency.value = 440 * Math.pow(2, (m - 69) / 12);
+    const v = .12 * $("#vol").value / 100;
+    g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(v, t0 + .02); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+    o.connect(g).connect(ac.destination); o.start(t0); o.stop(t0 + dur + .05);
+  };
+  function render() {
+    const tr = tracks[idx];
+    cover.style.background = tr.c; cover.classList.toggle("spin", playing);
+    tt.textContent = tr.t; ta.textContent = tr.a;
+    playBtn.innerHTML = playing ? I.pause : I.play;
+    lst.replaceChildren(...tracks.map((x, i) => h("button", { class: "row", onclick: () => { idx = i; step = 0; if (!playing) toggle(); else render(); } },
+      h("div", { class: "ri", style: `background:${x.c}`, html: i === idx && playing ? I.music.replace('fill="#fff"', 'fill="#fff" width="16"') : "" }),
+      h("div", { class: "rt" }, h("b", { style: i === idx ? "color:var(--jade)" : "" }, x.t), h("small", {}, x.a)))));
+  }
+  function toggle() {
+    playing = !playing; clearInterval(timer);
+    if (playing) {
+      timer = setInterval(() => {
+        const tr = tracks[idx], ms = 60000 / tr.bpm / 2;
+        note(tr.n[step % tr.n.length], ms / 1000 * 1.8, tr.wave);
+        if (step % 4 === 0) note(tr.n[0] - 24, ms / 1000 * 3.5, "sine");
+        step++; prog.style.width = (step % 64) / 64 * 100 + "%";
+        if (step % 64 === 0) { idx = (idx + 1) % tracks.length; render(); }
+      }, 60000 / tracks[idx].bpm / 2);
+    }
+    render();
+  }
+  function go(d) { idx = (idx + d + tracks.length) % tracks.length; step = 0; prog.style.width = 0; if (playing) { toggle(); toggle(); } else render(); }
+  playBtn.onclick = toggle;
+  render();
+  api.onKill = () => clearInterval(timer);
+}
+
+/* ===== Snake ===== */
+function Snake(el, api) {
+  const { body } = frame(el, api, "Змейка");
+  const N = 18, cv = h("canvas", { width: 360, height: 360 }), ctx = cv.getContext("2d");
+  const sc = h("b", {}, "0"), best = h("b", {}, String(store.get("snakeBest", 0)));
+  const startBtn = h("button", { class: "primary" }, "Начать игру");
+  let snake, dir, nextDir, food, loop = null, score = 0, alive = false;
+  const D = { u: [0, -1], d: [0, 1], l: [-1, 0], r: [1, 0] };
+  const turn = k => { const [x, y] = D[k]; if (x !== -dir[0] || y !== -dir[1]) nextDir = D[k]; if (!alive) start(); };
+  const pad = h("div", { class: "pad" }, ["u", "l", "d", "r"].map(k => h("button", { class: k, "aria-label": k, onclick: () => turn(k) }, { u: "▲", l: "◀", d: "▼", r: "▶" }[k])));
+  body.append(h("div", { class: "snake-wrap" }, h("div", { class: "score" }, h("span", {}, "Счёт ", sc), h("span", {}, "Рекорд ", best)), cv, startBtn, pad));
+  const place = () => { do { food = [Math.floor(Math.random() * N), Math.floor(Math.random() * N)]; } while (snake.some(([x, y]) => x === food[0] && y === food[1])); };
+  function reset() { snake = [[8, 9], [7, 9], [6, 9]]; dir = D.r; nextDir = D.r; score = 0; sc.textContent = 0; place(); draw(); }
+  function start() { reset(); alive = true; startBtn.style.display = "none"; clearInterval(loop); loop = setInterval(step, 120); }
+  function step() {
+    dir = nextDir;
+    const head = [snake[0][0] + dir[0], snake[0][1] + dir[1]];
+    if (head[0] < 0 || head[1] < 0 || head[0] >= N || head[1] >= N || snake.some(([x, y]) => x === head[0] && y === head[1])) return over();
+    snake.unshift(head);
+    if (head[0] === food[0] && head[1] === food[1]) { score += 10; sc.textContent = score; beep(880, .05); place(); } else snake.pop();
+    draw();
+  }
+  function over() {
+    clearInterval(loop); alive = false; beep(180, .3);
+    if (score > store.get("snakeBest", 0)) { store.set("snakeBest", score); best.textContent = score; }
+    startBtn.textContent = `Игра окончена: ${score}. Ещё раз`; startBtn.style.display = "";
+    draw(true);
+  }
+  function draw(dead) {
+    const c = 360 / N, cs = getComputedStyle(el);
+    ctx.fillStyle = cs.getPropertyValue("--os-card").trim(); ctx.fillRect(0, 0, 360, 360);
+    ctx.fillStyle = cs.getPropertyValue("--os-line").trim();
+    for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) if ((i + j) % 2) ctx.fillRect(i * c, j * c, c, c);
+    ctx.fillStyle = "#ef6a5b"; ctx.beginPath(); ctx.arc(food[0] * c + c / 2, food[1] * c + c / 2, c * .38, 0, 7); ctx.fill();
+    snake.forEach(([x, y], i) => { ctx.fillStyle = dead ? "#9db3af" : i ? "#2fc6a0" : "#f2b13c"; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x * c + 1, y * c + 1, c - 2, c - 2, 5) : ctx.rect(x * c + 1, y * c + 1, c - 2, c - 2); ctx.fill(); });
+  }
+  startBtn.onclick = start;
+  const keyH = e => { if (current !== "snake") return; const k = { ArrowUp: "u", ArrowDown: "d", ArrowLeft: "l", ArrowRight: "r", w: "u", s: "d", a: "l", d: "r" }[e.key]; if (k) { e.preventDefault(); turn(k); } };
+  document.addEventListener("keydown", keyH);
+  let t0 = null;
+  cv.addEventListener("pointerdown", e => t0 = [e.clientX, e.clientY]);
+  cv.addEventListener("pointerup", e => { if (!t0) return; const dx = e.clientX - t0[0], dy = e.clientY - t0[1]; t0 = null; if (Math.max(Math.abs(dx), Math.abs(dy)) < 20) { if (!alive) start(); return; } turn(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "r" : "l") : (dy > 0 ? "d" : "u")); });
+  reset();
+  api.onShow = () => draw();
+  api.onHide = () => { if (alive) { clearInterval(loop); alive = false; startBtn.textContent = "Продолжить заново"; startBtn.style.display = ""; } };
+  api.onKill = () => { clearInterval(loop); document.removeEventListener("keydown", keyH); };
+}
+
+/* ===== Files ===== */
+function Files(el, api) {
+  const { body, title } = frame(el, api, "Файлы");
+  const FS = {
+    "Документы": { "Резюме.pdf": "1,2 МБ", "План на неделю.txt": "4 КБ", "Договор аренды.docx": "86 КБ" },
+    "Загрузки": { "niri-os-wallpapers.zip": "24 МБ", "Билет_на_поезд.pdf": "310 КБ" },
+    "Музыка": { "Северное сияние.mid": "12 КБ", "Янтарный вечер.mid": "10 КБ" },
+    "Фото": { "IMG_0001.jpg": "3,4 МБ", "IMG_0002.jpg": "2,9 МБ", "Скриншот.png": "1,1 МБ" },
+    "Система": { "niri.kernel": "48 МБ", "aurora.conf": "2 КБ" },
+  };
+  let path = null;
+  function draw() {
+    title.textContent = path || "Файлы";
+    if (!path) {
+      body.replaceChildren(h("div", { class: "crumbs" }, "Внутренняя память · 64 ГБ"),
+        h("div", { class: "list" }, Object.keys(FS).map(d => h("button", { class: "row", onclick: () => { path = d; draw(); } },
+          h("div", { class: "ri", style: "background:#3a5fb0", html: I.folder }), h("div", { class: "rt" }, h("b", {}, d), h("small", {}, Object.keys(FS[d]).length + " файла")), h("span", { class: "rv" }, "›")))));
+    } else {
+      body.replaceChildren(h("div", { class: "crumbs" }, "Память › " + path),
+        h("div", { class: "list" }, Object.entries(FS[path]).map(([f, s]) => h("div", { class: "row" },
+          h("div", { class: "ri", style: "background:#557070", html: I.doc }), h("div", { class: "rt" }, h("b", {}, f), h("small", {}, s))))));
+    }
+  }
+  draw();
+  api.back = () => { if (path) { path = null; draw(); return true; } };
+}
+
+/* ===== Explore (Niri hub, no real web) ===== */
+function Explore(el, api) {
+  const { body } = frame(el, api, "Обзор");
+  const tips = [
+    ["Пункт управления", "Потяните строку состояния сверху вниз. Там Wi-Fi, фонарик, яркость и тема."],
+    ["Недавние приложения", "Нажмите квадрат над полоской внизу или клавишу R. Смахните приложение крестиком."],
+    ["Обои", "Настройки → Оформление: четыре фирменных обоя Niri OS."],
+    ["Помощник Нири", "Напишите Нири в «Сообщениях». Она отвечает на вопросы о системе."],
+    ["Рекорд в «Змейке»", "Лучший счёт сохраняется. Управление стрелками, WASD или свайпами."],
+  ];
+  body.append(
+    h("div", { class: "wx", style: "background:linear-gradient(150deg,#2fc6a0,#14535a)" }, h("div", { class: "city" }, "Добро пожаловать"), h("div", { class: "temp", style: "font-size:40px;letter-spacing:-0.02em;margin:10px 0" }, "Niri OS 1.0"), h("div", { class: "cond" }, "Что умеет ваш телефон")),
+    h("div", { class: "section-t" }, "Советы"),
+    h("div", { class: "list" }, tips.map(([t, d]) => h("div", { class: "row" }, h("div", { class: "ri", style: "background:var(--amber);color:#2b1c00", html: I.info }), h("div", { class: "rt" }, h("b", {}, t), h("small", { style: "white-space:normal" }, d))))),
+    h("div", { class: "section-t" }, "Быстрый запуск"),
+    h("div", { class: "pills" }, APPS.filter(a => a.id !== "browser").map(a => h("button", { class: "pill", onclick: () => openApp(a.id) }, a.name))));
+}
+
+/* ===== Settings ===== */
+function Settings(el, api) {
+  const { body, title } = frame(el, api, "Настройки");
+  let page = null;
+  const row = (icon, color, name, sub, right, onclick) => h(onclick ? "button" : "div", { class: "row", onclick },
+    h("div", { class: "ri", style: `background:${color}`, html: I[icon] }), h("div", { class: "rt" }, h("b", {}, name), sub ? h("small", {}, sub) : null), right ?? h("span", { class: "rv" }, "›"));
+  const sw = (on, fn) => h("span", { class: "switch" + (on ? " on" : ""), role: "switch", "aria-checked": String(on) });
+  function main() {
+    page = null; title.textContent = "Настройки";
+    body.replaceChildren(
+      h("div", { class: "profile" }, h("div", { class: "av" }, "Я"), h("div", {}, h("b", { style: "display:block;font-size:16px" }, "Владелец"), h("small", { style: "color:var(--os-dim)" }, "Niri ID, облако и устройства"))),
+      h("div", { class: "section-t" }, "Связь"),
+      h("div", { class: "list" },
+        row("wifi", "#2369a0", "Wi-Fi", S.wifi ? "Niri_Home_5G" : "Выключен", sw(S.wifi), () => { S.wifi = !S.wifi; S.plane = false; store.set("wifi", S.wifi); $("#sbWifi").style.opacity = S.wifi ? 1 : .3; main(); }),
+        row("bt", "#3a5fb0", "Bluetooth", S.bt ? "Наушники Niri Buds" : "Выключен", sw(S.bt), () => { S.bt = !S.bt; store.set("bt", S.bt); main(); }),
+        row("plane", "#d17a2a", "Авиарежим", null, sw(S.plane), () => { S.plane = !S.plane; if (S.plane) { S.wifi = false; S.bt = false; } $("#sbWifi").style.opacity = S.wifi ? 1 : .3; main(); })),
+      h("div", { class: "section-t" }, "Устройство"),
+      h("div", { class: "list" },
+        row("palette", "#c94a6a", "Оформление", `Обои «${WALL_NAMES[S.wall]}», ${S.theme === "dark" ? "тёмная" : "светлая"} тема`, null, () => appearance()),
+        row("bell", "#c94a4a", "Не беспокоить", null, sw(S.dnd), () => { S.dnd = !S.dnd; main(); }),
+        row("battery", "#2fbf6b", "Батарея", S.battery + "%, примерно 11 ч", null, () => battery()),
+        row("disk", "#557070", "Хранилище", "38,2 ГБ из 64 ГБ", null, () => storage()),
+        row("lock", "#424e52", "Заблокировать экран", null, h("span"), lockPhone)),
+      h("div", { class: "section-t" }, "Система"),
+      h("div", { class: "list" },
+        row("info", "#14806b", "О телефоне", "Niri OS 1.0 «Аврора»", null, () => about()),
+        row("trash", "#ef6a5b", "Сбросить данные", "Заметки, рекорды и настройки", null, () => reset())));
+  }
+  function sub(name) { page = name; title.textContent = name; }
+  function appearance() {
+    sub("Оформление");
+    body.replaceChildren(
+      h("div", { class: "section-t", style: "margin-top:0" }, "Обои"),
+      h("div", { class: "walls" }, WALLS.map((w, i) => h("button", { class: i === S.wall ? "on" : "", style: `background:${w}`, "aria-label": WALL_NAMES[i], onclick: () => { S.wall = i; store.set("wall", i); applyWall(); appearance(); } }))),
+      h("div", { class: "pills", style: "margin-top:8px;justify-content:space-around" }, WALL_NAMES.map(n => h("small", { style: "color:var(--os-dim)" }, n))),
+      h("div", { class: "section-t" }, "Тема"),
+      h("div", { class: "pills" }, [["dark", "Тёмная"], ["light", "Светлая"]].map(([k, n]) => h("button", { class: "pill" + (S.theme === k ? " on" : ""), onclick: () => { S.theme = k; store.set("theme", k); applyTheme(); syncChrome(); appearance(); } }, n))),
+      h("div", { class: "section-t" }, "Яркость"),
+      (() => { const r = h("input", { type: "range", id: "set-bright", min: 20, max: 100, value: $("#bright").value }); r.addEventListener("input", () => { $("#bright").value = r.value; $("#bright").dispatchEvent(new Event("input")); }); return h("div", { class: "list", style: "padding:14px 16px" }, r); })());
+  }
+  function battery() {
+    sub("Батарея");
+    const cv = h("canvas", { width: 600, height: 220, style: "width:100%;height:auto;display:block" });
+    body.replaceChildren(h("div", { class: "about-hero" }, h("h3", {}, S.battery + "%"), h("p", {}, "Хватит примерно на 11 часов")), h("div", { class: "section-t" }, "Последние 24 часа"), h("div", { class: "list", style: "padding:12px" }, cv),
+      h("div", { class: "list", style: "margin-top:14px" }, [["Экран", "34%"], ["Музыка", "18%"], ["Сообщения", "12%"], ["Змейка", "9%"], ["Система", "27%"]].map(([n, p]) => h("div", { class: "row" }, h("div", { class: "rt" }, n), h("span", { class: "rv" }, p)))));
+    const ctx = cv.getContext("2d"), cs = getComputedStyle(el);
+    const pts = [100, 96, 91, 88, 85, 80, 74, 70, 100, 100, 98, 95, 93, 90, S.battery];
+    ctx.strokeStyle = cs.getPropertyValue("--os-line").trim(); ctx.lineWidth = 1;
+    for (let y = 0; y <= 4; y++) { ctx.beginPath(); ctx.moveTo(0, 10 + y * 50); ctx.lineTo(600, 10 + y * 50); ctx.stroke(); }
+    const X = i => i / (pts.length - 1) * 590 + 5, Y = v => 210 - v * 2;
+    const g = ctx.createLinearGradient(0, 0, 0, 220); g.addColorStop(0, "#2fc6a066"); g.addColorStop(1, "#2fc6a000");
+    ctx.beginPath(); pts.forEach((v, i) => i ? ctx.lineTo(X(i), Y(v)) : ctx.moveTo(X(i), Y(v))); ctx.lineTo(595, 210); ctx.lineTo(5, 210); ctx.fillStyle = g; ctx.fill();
+    ctx.beginPath(); pts.forEach((v, i) => i ? ctx.lineTo(X(i), Y(v)) : ctx.moveTo(X(i), Y(v))); ctx.strokeStyle = "#2fc6a0"; ctx.lineWidth = 4; ctx.stroke();
+    ctx.fillStyle = "#f2b13c"; ctx.beginPath(); ctx.arc(X(pts.length - 1), Y(S.battery), 7, 0, 7); ctx.fill();
+  }
+  function storage() {
+    sub("Хранилище");
+    const parts = [["Система", 12.4, "#557070"], ["Фото", 14.1, "#ef6a5b"], ["Приложения", 7.8, "#2fc6a0"], ["Музыка", 3.9, "#f2b13c"]];
+    body.replaceChildren(h("div", { class: "about-hero" }, h("h3", {}, "38,2 ГБ"), h("p", {}, "занято из 64 ГБ")),
+      h("div", { class: "storage" }, parts.map(([, v, c]) => h("i", { style: `width:${v / 64 * 100}%;background:${c}` }))),
+      h("div", { class: "list", style: "margin-top:14px" }, parts.map(([n, v, c]) => h("div", { class: "row" }, h("span", { style: `width:12px;height:12px;border-radius:4px;background:${c}` }), h("div", { class: "rt" }, n), h("span", { class: "rv" }, String(v).replace(".", ",") + " ГБ")))));
+  }
+  function about() {
+    sub("О телефоне");
+    const logo = $("#boot .logo")?.outerHTML || '<svg class="logo" viewBox="0 0 84 84" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 66V18l48 48V18" stroke="#2fc6a0" stroke-width="8"/><path d="M66 18 18 66" stroke="#f2b13c" stroke-width="3" opacity=".8"/></svg>';
+    let taps = 0;
+    const hero = h("div", { class: "about-hero", html: logo }, h("h3", {}, "Niri OS"), h("p", {}, "Версия 1.0 «Аврора»"));
+    hero.addEventListener("click", () => { if (++taps === 7) notify({ icon: "info", color: "#14806b", title: "Niri OS", text: "Вы нашли пасхалку! Режим разработчика включён 🛠️" }); });
+    body.replaceChildren(hero, h("div", { class: "list" },
+      [["Модель", "Niri Phone 1"], ["Версия ОС", "1.0.0 (Аврора)"], ["Сборка", "NR1A.261015.001"], ["Ядро", "niri-kernel 6.1"], ["Процессор", "Niri N1, 8 ядер"], ["Оперативная память", "8 ГБ"], ["Память", "64 ГБ"], ["Экран", "6,4″, 120 Гц"]]
+        .map(([k, v]) => h("div", { class: "row" }, h("div", { class: "rt" }, k), h("span", { class: "rv" }, v)))),
+      h("p", { class: "sample" }, "Нажмите на логотип 7 раз"));
+  }
+  function reset() {
+    sub("Сбросить данные");
+    body.replaceChildren(h("p", { style: "line-height:1.5" }, "Удалить заметки, рекорд «Змейки», обои и тему? Это действие нельзя отменить."),
+      h("div", { class: "btnrow", style: "justify-content:flex-start;gap:10px" },
+        h("button", { class: "primary", style: "background:var(--coral);color:#fff;width:auto;height:auto", onclick: () => {
+          try { Object.keys(localStorage).filter(k => k.startsWith("niri:")).forEach(k => localStorage.removeItem(k)); } catch {}
+          location.reload();
+        } }, "Сбросить"),
+        h("button", { class: "pill", onclick: main }, "Отмена")));
+  }
+  main();
+  refreshSettings = () => { if (!page && running.has("settings")) main(); };
+  api.back = () => { if (page) { main(); return true; } };
+}
+
+updateBadges();
+})();
+</script>
+</body>
+</html>
