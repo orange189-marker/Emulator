@@ -102,7 +102,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px
 }
 .status.dark-ink { color: var(--os-ink); text-shadow: none; }
 .status .icons { display: flex; gap: 6px; align-items: center; }
-.status svg { width: 16px; height: 16px; fill: currentColor; }
+.status svg { width: 16px; height: 16px; }
 .battery { display: inline-flex; align-items: center; gap: 4px; }
 .battery i { display: block; width: 22px; height: 11px; border: 1.5px solid currentColor; border-radius: 3px; padding: 1px; position: relative; }
 .battery i::after { content: ""; position: absolute; right: -4px; top: 3px; width: 2px; height: 4px; background: currentColor; border-radius: 0 1px 1px 0; }
@@ -135,7 +135,13 @@ button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px
 .notif .ic.art svg { width: 100%; height: 100%; display: block; }
 .notif b { display: block; font-size: 13px; }
 .notif span { font-size: 13px; color: #c4d6d2; }
-#lock .hint { margin: 18px 0 30px; font-size: 13px; opacity: .85; display: flex; flex-direction: column; align-items: center; gap: 8px; animation: bob 2s ease-in-out infinite; }
+#lock .lico { width: 22px; height: 22px; margin-bottom: 8px; opacity: .9; filter: drop-shadow(0 1px 3px #0006); }
+#lock .lico svg, .lq svg { width: 100%; height: 100%; display: block; }
+.lq { position: absolute; bottom: 34px; width: 50px; height: 50px; padding: 14px; border-radius: 50%; background: #0f171980; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); color: #fff; transition: background .2s, transform .1s; }
+.lq:active { transform: scale(.9); }
+.lq.left { left: 30px; } .lq.right { right: 30px; }
+.lq.on { background: #fff; color: #102022; }
+#lock .hint { margin: 16px 0 96px; font-size: 13px; opacity: .85; display: flex; flex-direction: column; align-items: center; gap: 8px; animation: bob 2s ease-in-out infinite; }
 #lock .hint::before { content: ""; width: 120px; height: 5px; border-radius: 3px; background: #fff; }
 @keyframes bob { 50% { transform: translateY(-6px); } }
 
@@ -150,7 +156,9 @@ button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px
 .widget .wt { font-family: var(--f-display); font-weight: 600; font-size: 38px; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
 .widget .wd { font-size: 13px; color: var(--os-dim); }
 .widget .ww { grid-row: 1 / span 2; grid-column: 2; text-align: right; }
-.widget .ww b { font-family: var(--f-display); font-size: 26px; font-weight: 600; display: block; }
+.widget .ww b { font-family: var(--f-display); font-size: 26px; font-weight: 600; display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+.wico { display: block; width: 24px; height: 24px; color: #ffcf4a; }
+.wico svg { width: 100%; height: 100%; display: block; }
 .widget .ww span { font-size: 12px; color: var(--os-dim); }
 .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px 8px; align-content: start; }
 .app-icon { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 500; color: #fff; text-shadow: 0 1px 3px #0009; }
@@ -180,7 +188,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px
 .app .body { flex: 1; overflow: auto; padding: 0 16px 60px; min-height: 0; }
 .app .body::-webkit-scrollbar { width: 0; }
 .iconbtn { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--os-card); }
-.iconbtn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.iconbtn svg { width: 19px; height: 19px; }
 
 /* recents */
 #recents { z-index: 35; background: #000a; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; flex-direction: column; padding: 60px 0 70px; opacity: 0; pointer-events: none; transition: opacity .25s; }
@@ -204,7 +212,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px
 .toggles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .tgl { border-radius: 22px; padding: 14px; background: #ffffff14; display: flex; align-items: center; gap: 10px; text-align: left; transition: background .2s, color .2s; }
 .tgl .ti { width: 36px; height: 36px; border-radius: 50%; background: #ffffff1f; display: grid; place-items: center; flex: none; }
-.tgl svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tgl svg { width: 20px; height: 20px; }
 .tgl b { display: block; font-size: 13px; }
 .tgl small { font-size: 11px; opacity: .75; }
 .tgl.on { background: var(--jade); color: #04211a; }
@@ -222,7 +230,7 @@ input[type=range] { width: 100%; accent-color: var(--jade); }
 .navbtns.on { opacity: 1; pointer-events: auto; }
 .navbtns button { width: 40px; height: 32px; border-radius: 16px; display: grid; place-items: center; color: #eef5f3; }
 .navbtns button:hover { background: #ffffff1f; }
-.navbtns svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.navbtns svg { width: 19px; height: 19px; }
 
 #dim { position: absolute; inset: 0; z-index: 95; background: #000; pointer-events: none; opacity: 0; }
 #toast { position: absolute; top: 46px; left: 12px; right: 12px; z-index: 80; transform: translateY(-140%); transition: transform .4s cubic-bezier(.2,.9,.2,1); }
@@ -233,7 +241,15 @@ input[type=range] { width: 100%; accent-color: var(--jade); }
 .row { display: flex; align-items: center; gap: 12px; padding: 13px 16px; text-align: left; width: 100%; }
 .row + .row { border-top: 1px solid var(--os-line); }
 .row .ri { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; flex: none; color: #fff; }
-.row .ri svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.row .ri { position: relative; overflow: hidden; box-shadow: 0 2px 6px -2px #0006; }
+.row .ri::before { content: ""; position: absolute; inset: 0; background: linear-gradient(#ffffff40, #ffffff00 65%); }
+.row .ri svg { position: relative; width: 19px; height: 19px; }
+.row .chev { color: var(--os-dim); opacity: .7; display: grid; }
+.row .chev svg { width: 16px; height: 16px; }
+.eq { display: flex; gap: 2px; align-items: flex-end; height: 14px; position: relative; }
+.eq i { width: 3px; background: #fff; border-radius: 2px; animation: eq .8s ease-in-out infinite; }
+.eq i:nth-child(2) { animation-delay: -.3s; } .eq i:nth-child(3) { animation-delay: -.55s; }
+@keyframes eq { 0%, 100% { height: 4px; } 50% { height: 14px; } }
 .row .rt { flex: 1; min-width: 0; }
 .row .rt b { display: block; font-weight: 500; }
 .row .rt small { color: var(--os-dim); font-size: 12px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -275,6 +291,7 @@ input[type=range] { width: 100%; accent-color: var(--jade); }
 .keys .op { background: var(--amber); color: #2b1c00; font-size: 30px; }
 .keys .op.armed { background: var(--os-ink); color: var(--amber); }
 .keys .fn { background: var(--os-line); font-size: 22px; }
+.keys button svg { width: 28px; height: 28px; display: block; margin: auto; }
 .keys .eq { background: var(--jade); color: #04211a; font-size: 30px; }
 .seg { display: flex; background: var(--os-card); border-radius: 14px; padding: 3px; }
 .seg button { padding: 6px 10px; border-radius: 11px; font-size: 12.5px; font-weight: 600; color: var(--os-dim); }
@@ -325,7 +342,7 @@ input[type=range] { width: 100%; accent-color: var(--jade); }
 .editor input { font-family: var(--f-display); font-size: 22px; font-weight: 600; }
 .editor textarea { flex: 1; font-size: 15px; line-height: 1.55; min-height: 300px; }
 .fab { position: absolute; right: 20px; bottom: 50px; width: 56px; height: 56px; border-radius: 18px; background: var(--amber); color: #2b1c00; display: grid; place-items: center; box-shadow: 0 8px 20px #0006; }
-.fab svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+.fab svg { width: 26px; height: 26px; }
 
 /* clock */
 .bigclock { display: grid; place-items: center; margin: 10px 0 20px; }
@@ -351,6 +368,9 @@ input[type=range] { width: 100%; accent-color: var(--jade); }
 .hours { display: flex; gap: 14px; overflow-x: auto; padding: 14px 4px; }
 .hours div { flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 13px; font-variant-numeric: tabular-nums; }
 .hours div span { color: var(--os-dim); font-size: 12px; }
+.wi { display: block; width: 24px; height: 24px; flex: none; }
+.wi svg { width: 100%; height: 100%; display: block; }
+.days .wi { width: 22px; height: 22px; }
 .days .row b { width: 40px; flex: none; }
 .days .tbar { flex: 1; height: 5px; border-radius: 3px; background: var(--os-line); position: relative; }
 .days .tbar i { position: absolute; top: 0; bottom: 0; border-radius: 3px; background: linear-gradient(90deg, var(--jade), var(--amber)); }
@@ -385,7 +405,8 @@ input[type=range] { width: 100%; accent-color: var(--jade); }
 .score { display: flex; justify-content: space-between; width: 100%; max-width: 320px; font-variant-numeric: tabular-nums; }
 .score b { font-family: var(--f-display); }
 .pad { display: grid; grid-template-columns: repeat(3, 56px); grid-template-rows: repeat(2, 48px); gap: 6px; }
-.pad button { background: var(--os-card); border-radius: 14px; font-size: 18px; }
+.pad button { background: var(--os-card); border-radius: 14px; display: grid; place-items: center; }
+.pad svg { width: 22px; height: 22px; }
 .pad .u { grid-column: 2; }
 .pad .l { grid-column: 1; grid-row: 2; }
 .pad .d { grid-column: 2; grid-row: 2; }
@@ -457,8 +478,8 @@ input[type=range] { width: 100%; accent-color: var(--jade); }
     <div class="status" id="status">
       <span id="sbTime">00:00</span>
       <span class="icons">
-        <svg id="sbWifi" viewBox="0 0 24 24"><path d="M12 20.5 1.5 8.3A15.7 15.7 0 0 1 12 4.5c4 0 7.7 1.4 10.5 3.8z"/></svg>
-        <svg viewBox="0 0 24 24"><path d="M2 21h3v-4H2zm5 0h3v-8H7zm5 0h3V9h-3zm5 0h3V3h-3z"/></svg>
+        <svg id="sbWifi" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M3.5 9.6a12.4 12.4 0 0 1 17 0"/><path d="M6.9 13.2a7.6 7.6 0 0 1 10.2 0"/></g><circle cx="12" cy="17.6" r="2.1" fill="currentColor"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2.5" y="15" width="3.6" height="5" rx="1.2" fill="currentColor"/><rect x="7.6" y="11.5" width="3.6" height="8.5" rx="1.2" fill="currentColor"/><rect x="12.7" y="8" width="3.6" height="12" rx="1.2" fill="currentColor"/><rect x="17.8" y="4" width="3.6" height="16" rx="1.2" fill="currentColor" fill-opacity=".38"/></svg>
         <span class="battery"><span id="sbBatt">87</span><i><b id="sbBattBar" style="width:87%"></b></i></span>
       </span>
     </div>
@@ -468,7 +489,7 @@ input[type=range] { width: 100%; accent-color: var(--jade); }
       <div class="widget">
         <div class="wt" id="wTime">00:00</div>
         <div class="wd" id="wDate"></div>
-        <div class="ww"><b>+14°</b><span>Ясно</span></div>
+        <div class="ww"><b><i class="wico" id="wIco"></i>+14°</b><span>Ясно</span></div>
       </div>
       <div class="grid" id="grid"></div>
       <div class="dock" id="dock"></div>
@@ -488,18 +509,21 @@ input[type=range] { width: 100%; accent-color: var(--jade); }
     </div>
 
     <div class="layer" id="lock">
+      <div class="lico" id="lIco"></div>
       <div class="ldate" id="lDate"></div>
       <div class="ltime" id="lTime">00:00</div>
       <div class="lnotes" id="lNotes"></div>
       <div class="hint">Проведите вверх, чтобы открыть</div>
+      <button class="lq left" id="lqTorch" aria-label="Фонарик"></button>
+      <button class="lq right" id="lqCam" aria-label="Камера"></button>
     </div>
 
     <div id="toast"></div>
 
     <div class="navbtns" id="navbtns">
-      <button id="navBack" aria-label="Назад"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
-      <button id="navHome" aria-label="Домой"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/></svg></button>
-      <button id="navRecents" aria-label="Недавние"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="3"/></svg></button>
+      <button id="navBack" aria-label="Назад"></button>
+      <button id="navHome" aria-label="Домой"></button>
+      <button id="navRecents" aria-label="Недавние"></button>
     </div>
     <div class="nav"><button class="homebar" id="homebar" aria-label="Домой"></button></div>
 
@@ -543,42 +567,68 @@ const RU_DAYS = ["воскресенье","понедельник","вторни
 const RU_MON = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
 
 /* ---------- icons ---------- */
+const ic = (inner, sw = 1.8) => `<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${inner}</g></svg>`;
+const D = 'fill="currentColor" fill-opacity=".24" stroke="none"';   // duotone tint
+const F = 'fill="currentColor" stroke="none"';                       // solid
+const solid = inner => `<svg viewBox="0 0 24 24" aria-hidden="true">${inner}</svg>`;
+const both = (tag, attrs) => `<${tag} ${D} ${attrs}/><${tag} ${attrs}/>`;
+const HANDSET = "M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z";
+const DOC = 'd="M6.5 3h7.5l5 5v11a2 2 0 0 1-2 2H6.5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"';
+const CLOUD = 'd="M7.2 18.5a4 4 0 0 1-.6-7.9 5.6 5.6 0 0 1 10.8 1.5 3.3 3.3 0 0 1 .2 6.4z"';
 const I = {
-  phone: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>',
-  msg: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-5 4V6a2 2 0 0 1 1-2z"/></svg>',
-  calc: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8.5 7.5h7M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/></svg>',
-  notes: '<svg viewBox="0 0 24 24" fill="none" stroke="#2b1c00" stroke-width="2.2" stroke-linecap="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h3"/></svg>',
-  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
-  weather: '<svg viewBox="0 0 24 24" fill="#fff"><circle cx="9" cy="9" r="4" fill="#ffd56b"/><path d="M8 20a4 4 0 0 1 0-8 5 5 0 0 1 9.6 1.5A3.3 3.3 0 0 1 17 20z"/></svg>',
-  gallery: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m3 16 5-5 5 5 3-3 5 5"/><circle cx="16" cy="9" r="1.5" fill="#fff"/></svg>',
-  music: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M9 17V5l11-2v12"/><circle cx="6.5" cy="17.5" r="3"/><circle cx="17.5" cy="15.5" r="3"/><path d="M9 5l11-2v3L9 8z"/></svg>',
-  snake: '<svg viewBox="0 0 24 24" fill="none" stroke="#04211a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19h6a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h8"/><circle cx="18" cy="7" r="1.6" fill="#04211a"/></svg>',
-  settings: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>',
-  files: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
-  compass: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z" fill="#fff"/></svg>',
-  back: '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',
-  plus: '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
-  trash: '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
-  x: '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>',
-  send: '<svg viewBox="0 0 24 24"><path d="M3 20.5 21 12 3 3.5v6.6l12 1.9-12 1.9z"/></svg>',
-  play: '<svg viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z"/></svg>',
-  pause: '<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zm8 0h4v16h-4z"/></svg>',
-  next: '<svg viewBox="0 0 24 24"><path d="M5 5v14l10-7zm11 0h3v14h-3z"/></svg>',
-  prev: '<svg viewBox="0 0 24 24"><path d="M19 5v14L9 12zM5 5h3v14H5z"/></svg>',
-  wifi: '<svg viewBox="0 0 24 24"><path d="M2 8.5a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r="1"/></svg>',
-  bt: '<svg viewBox="0 0 24 24"><path d="m7 7 10 10-5 4V3l5 4L7 17"/></svg>',
-  plane: '<svg viewBox="0 0 24 24"><path d="M21 15.5 13 11V4.5a1.5 1.5 0 0 0-3 0V11l-8 4.5V17l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-4.5l8 2.5z"/></svg>',
-  torch: '<svg viewBox="0 0 24 24"><path d="M7 3h10v4l-3 4v10h-4V11L7 7z"/></svg>',
-  moon: '<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>',
-  bell: '<svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg>',
-  palette: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="8" cy="10" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16" cy="10" r="1"/></svg>',
-  sun: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/></svg>',
-  info: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>',
-  lock: '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
-  battery: '<svg viewBox="0 0 24 24"><rect x="3" y="7" width="16" height="10" rx="2"/><path d="M21 10v4"/></svg>',
-  disk: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 15h.01M11 15h6"/></svg>',
-  folder: '<svg viewBox="0 0 24 24"><path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
-  doc: '<svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/></svg>',
+  /* navigation */
+  back: ic('<path d="M14.5 5.5 8 12l6.5 6.5"/>', 2.3),
+  chev: ic('<path d="m9.5 6 6 6-6 6"/>', 2.2),
+  up: ic('<path d="m6 14.5 6-6 6 6"/>', 2.6), down: ic('<path d="m6 9.5 6 6 6-6"/>', 2.6),
+  left: ic('<path d="m14.5 6-6 6 6 6"/>', 2.6), right: ic('<path d="m9.5 6 6 6-6 6"/>', 2.6),
+  homeNav: ic('<circle cx="12" cy="12" r="7.5"/>', 2.2),
+  recentsNav: ic('<rect x="4.5" y="7.5" width="11" height="13" rx="2.6"/><path d="M8.5 4.5h8a3 3 0 0 1 3 3v9"/>', 2.1),
+  plus: ic('<path d="M12 5v14M5 12h14"/>', 2.4),
+  x: ic('<path d="M7 7l10 10M17 7 7 17"/>', 2.3),
+  /* actions */
+  trash: ic(`<path ${D} d="M6.5 8h11l-.9 11.2a2 2 0 0 1-2 1.8H9.4a2 2 0 0 1-2-1.8z"/><path d="M4.5 8h15M9.5 8V5.5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V8M6.5 8l.9 11.2a2 2 0 0 0 2 1.8h5.2a2 2 0 0 0 2-1.8L17.5 8M10.5 11.5v5.5M13.5 11.5v5.5"/>`),
+  send: solid('<path fill="currentColor" d="M3.6 10.9 19.4 3.7c1-.4 1.9.5 1.4 1.4l-7.2 15.8c-.4 1-1.8.9-2-.1l-1.4-5.7a1 1 0 0 0-.7-.7L3.8 13c-1-.3-1.1-1.6-.2-2.1z"/>'),
+  play: solid('<path fill="currentColor" d="M8 5.2v13.6a1.2 1.2 0 0 0 1.8 1l10.8-6.8a1.2 1.2 0 0 0 0-2L9.8 4.2A1.2 1.2 0 0 0 8 5.2z"/>'),
+  pause: solid('<rect fill="currentColor" x="6" y="4.5" width="4.2" height="15" rx="1.6"/><rect fill="currentColor" x="13.8" y="4.5" width="4.2" height="15" rx="1.6"/>'),
+  next: solid('<path fill="currentColor" d="M4.5 6.3v11.4a1.1 1.1 0 0 0 1.7.9l8.3-5.7a1.1 1.1 0 0 0 0-1.8L6.2 5.4a1.1 1.1 0 0 0-1.7.9z"/><rect fill="currentColor" x="16.3" y="5" width="3.2" height="14" rx="1.6"/>'),
+  prev: solid('<g transform="matrix(-1 0 0 1 24 0)"><path fill="currentColor" d="M4.5 6.3v11.4a1.1 1.1 0 0 0 1.7.9l8.3-5.7a1.1 1.1 0 0 0 0-1.8L6.2 5.4a1.1 1.1 0 0 0-1.7.9z"/><rect fill="currentColor" x="16.3" y="5" width="3.2" height="14" rx="1.6"/></g>'),
+  phone: solid(`<path fill="currentColor" d="${HANDSET}"/>`),
+  endcall: solid(`<path fill="currentColor" transform="rotate(135 12 12)" d="${HANDSET}"/>`),
+  history: ic('<path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5"/><path d="M3.5 4v4.5H8M12 7.5V12l3 2"/>', 2),
+  backspace: ic(`<path ${D} d="M8.6 5H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8.6L3 12z"/><path d="M8.6 5H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8.6L3 12z"/><path d="m11.5 9.5 5 5M16.5 9.5l-5 5"/>`, 1.9),
+  /* system */
+  wifi: ic(`<path d="M2.8 9.2a13.5 13.5 0 0 1 18.4 0"/><path d="M6 12.6a9 9 0 0 1 12 0"/><path d="M9.2 16a4.4 4.4 0 0 1 5.6 0"/><circle ${F} cx="12" cy="19.2" r="1.5"/>`, 2),
+  bt: ic('<path d="m7 7.5 10 9-5 4.5V3l5 4.5-10 9"/>', 2),
+  plane: solid('<path fill="currentColor" d="M21 15.6v-1.4a1 1 0 0 0-.5-.9L13.5 9V4a1.5 1.5 0 0 0-3 0v5l-7 4.3a1 1 0 0 0-.5.9v1.4l7.5-2.3V19l-1.8 1.3a.6.6 0 0 0-.2.5v.7l3.5-1 3.5 1v-.7a.6.6 0 0 0-.2-.5L13.5 19v-5.7z"/>'),
+  torch: ic(`<path ${D} d="M8 9h8l-2 3.5V20a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-7.5z"/><path d="M7 3h10v3.3a2 2 0 0 1-.3 1L16 9H8l-.7-1.7a2 2 0 0 1-.3-1z"/><path d="M8 9l2 3.5V20a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-7.5L16 9M12 14v2.5"/>`),
+  moon: ic(both("path", 'd="M20 14.6A8.4 8.4 0 0 1 9.4 4a8.4 8.4 0 1 0 10.6 10.6z"')),
+  sun: ic(`${both("circle", 'cx="12" cy="12" r="4"')}<path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>`),
+  bell: ic(`${both("path", 'd="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"')}<path d="M10 21h4"/>`),
+  palette: ic(`${both("path", 'd="M12 3a9 9 0 0 0 0 18c1.2 0 1.8-.8 1.8-1.7 0-1.4-1.3-1.8-1.3-3 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4C21 6.4 17 3 12 3z"')}<circle ${F} cx="7.5" cy="11.5" r="1.3"/><circle ${F} cx="10" cy="7.5" r="1.3"/><circle ${F} cx="14.5" cy="7.5" r="1.3"/>`),
+  info: ic(`${both("circle", 'cx="12" cy="12" r="9"')}<path d="M12 11v5.5"/><circle ${F} cx="12" cy="7.8" r="1.2"/>`),
+  lock: ic(`${both("rect", 'x="4.5" y="10.5" width="15" height="10.5" rx="2.6"')}<path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle ${F} cx="12" cy="15.7" r="1.4"/>`),
+  battery: ic(`<rect x="2.5" y="7" width="17" height="10" rx="2.6"/><rect ${F} x="4.6" y="9.1" width="10" height="5.8" rx="1.1"/><path d="M21.5 10.5v3"/>`),
+  disk: ic(`${both("rect", 'x="3" y="4" width="18" height="16" rx="3"')}<path d="M3 13h18"/><circle ${F} cx="7" cy="16.5" r="1.1"/><path d="M11 16.5h6"/>`),
+  sliders: ic(`<path d="M4 7h9M18 7h2M4 17h3M12 17h8"/>${both("circle", 'cx="15.5" cy="7" r="2.4"')}${both("circle", 'cx="9.5" cy="17" r="2.4"')}`),
+  chat: ic(`${both("path", 'd="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 3.5V17A2.5 2.5 0 0 1 4 14.5z"')}<path d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01" stroke-width="2.8"/>`),
+  trophy: ic(`${both("path", 'd="M7 4h10v5a5 5 0 0 1-10 0z"')}<path d="M7 6H4.5v1.5a3 3 0 0 0 3 3M17 6h2.5v1.5a3 3 0 0 1-3 3M12 14v3.5M8.5 20.5h7"/>`),
+  camera: ic(`${both("path", 'd="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.8l1.4-2h4.6l1.4 2h1.8A2.5 2.5 0 0 1 20 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5z"')}<circle cx="12" cy="12.8" r="3.4"/>`),
+  /* files */
+  folder: ic(both("path", 'd="M3 7.5a2 2 0 0 1 2-2h4.2l2 2.2H19a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"')),
+  doc: ic(`${both("path", DOC)}<path d="M14 3v5h5M8.5 13h7M8.5 16.5h4.5"/>`),
+  pdf: ic(`${both("path", DOC)}<path d="M14 3v5h5"/><path d="M8.2 17.5c2.5-1.2 4.6-4.5 4.3-6.6-.2-1.4-1.9-1.1-1.6.4.4 2 3.2 4.6 5 4.8 1.2.1 1.2-1.2 0-1.3-2-.2-5.4 1.2-7.1 2.8-.8.7-.3 1.4.4 1.1"/>`, 1.5),
+  image: ic(`${both("rect", 'x="3" y="4" width="18" height="16" rx="3"')}<circle cx="9" cy="9.5" r="1.8"/><path d="m3.5 17 5-4.5 4 3.5 3-2.5 5 4"/>`),
+  music: ic(`<path d="M9 18V5.5l11-2V16"/>${both("circle", 'cx="6.5" cy="18" r="2.5"')}${both("circle", 'cx="17.5" cy="16" r="2.5"')}`),
+  zip: ic(`${both("path", DOC)}<path d="M11 3v1.8h2v1.8h-2v1.8h2v1.8h-2"/><rect x="10" y="12.5" width="4" height="4.5" rx="1.2"/>`),
+  gear: ic(`${both("path", 'd="M10.3 3.3h3.4l.5 2.4 1.7 1 2.3-.8 1.7 3-1.8 1.6v2l1.8 1.6-1.7 3-2.3-.8-1.7 1-.5 2.4h-3.4l-.5-2.4-1.7-1-2.3.8-1.7-3L5.7 13v-2L3.9 9.4l1.7-3 2.3.8 1.7-1z"')}<circle cx="12" cy="12" r="2.8"/>`),
+  download: ic(`<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5"/><path d="M4.5 15.5v3a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3"/>`, 2),
+  ticket: ic(`${both("path", 'd="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"')}<path d="M14.5 6v12" stroke-dasharray="1.5 2.5"/>`),
+  /* weather */
+  wsun: ic(`<circle ${F} cx="12" cy="12" r="4.4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>`, 2),
+  wmoon: ic(`<path ${F} d="M19.5 14.6A8 8 0 0 1 9.4 4.5a8 8 0 1 0 10.1 10.1z"/>`),
+  wcloud: ic(`<path ${F} fill-opacity=".9" ${CLOUD}/>`),
+  wpartly: ic(`<circle ${F} cx="9" cy="8.5" r="3.6" style="color:#ffcf4a"/><path d="M9 2v1.2M3 8.5h1.2M4.8 4.3l.8.8M13.2 4.3l-.8.8" style="color:#ffcf4a"/><path ${F} transform="translate(2.5 2)" ${CLOUD}/>`),
+  wrain: ic(`<path ${F} fill-opacity=".9" transform="translate(0 -3)" ${CLOUD}/><path d="M8 18.5l-1 2.5M12 18.5l-1 2.5M16 18.5l-1 2.5" style="color:#6cc8ea"/>`, 2),
 };
 
 /* ---------- app icons (full-tile artwork, 60×60) ---------- */
@@ -617,7 +667,7 @@ const WALLS = [
 const WALL_NAMES = ["Аврора", "Закат", "Туман", "Призма"];
 
 const screen = $("#screen");
-function applyWall() { $("#wallpaper").style.background = WALLS[S.wall]; }
+function applyWall() { $("#wallpaper").style.background = WALLS[S.wall]; $("#lock").style.background = `linear-gradient(#0000 30%, #0008), ${WALLS[S.wall]}`; }
 function applyTheme() { screen.dataset.themeOs = S.theme; }
 applyWall(); applyTheme();
 
@@ -673,6 +723,7 @@ const APPS = [
   { id: "snake", name: "Змейка", color: "linear-gradient(145deg,#b9f06b,#4fc66a)", icon: "snake", make: Snake },
   { id: "files", name: "Файлы", color: "linear-gradient(145deg,#6b9cf0,#3a5fb0)", icon: "files", make: Files },
 ];
+$("#navBack").innerHTML = I.back; $("#navHome").innerHTML = I.homeNav; $("#navRecents").innerHTML = I.recentsNav;
 const byId = Object.fromEntries(APPS.map(a => [a.id, a]));
 let unread = { messages: 2 };
 
@@ -850,7 +901,11 @@ function lockPhone() {
 }
 (() => {
   const lock = $("#lock"); let y0 = null;
-  lock.addEventListener("pointerdown", e => { y0 = e.clientY; });
+  lock.addEventListener("pointerdown", e => { if (e.target.closest("button")) return; y0 = e.clientY; });
+  $("#wIco").innerHTML = I.wsun; $("#lIco").innerHTML = I.lock;
+  $("#lqTorch").innerHTML = I.torch; $("#lqCam").innerHTML = I.camera;
+  $("#lqTorch").addEventListener("click", () => { S.torch = !S.torch; $("#lqTorch").classList.toggle("on", S.torch); screen.style.boxShadow = S.torch ? "0 0 60px 10px #fff8" : ""; renderToggles(); });
+  $("#lqCam").addEventListener("click", () => { unlock(); setTimeout(() => openApp("gallery"), 450); });
   lock.addEventListener("pointermove", e => { if (y0 != null) { const dy = Math.min(0, e.clientY - y0); lock.style.transition = "none"; lock.style.transform = `translateY(${dy}px)`; lock.style.opacity = 1 + dy / 400; } });
   const end = e => {
     if (y0 == null) return;
@@ -887,7 +942,7 @@ function Phone(el, api) {
   const pad = h("div", { class: "dialpad" }, keys.map(([d, l]) => h("button", { onclick: () => { num += d; disp.textContent = num; beep(700 + (Number(d) || 0) * 40, .06); } }, h("b", {}, d), h("small", {}, l || " "))));
   const recent = h("div", { class: "list", style: "margin-top:22px" }, contacts.map(([n, p]) =>
     h("button", { class: "row", onclick: () => call(n) }, h("div", { class: "ri", style: "background:var(--jade)", html: I.phone }), h("div", { class: "rt" }, h("b", {}, n), h("small", {}, p)), h("span", { class: "rv" }, "Вызов"))));
-  const callBtn = h("button", { class: "callbtn", "aria-label": "Позвонить", html: I.phone.replace('fill="#fff"', ""), onclick: () => num && call(num) });
+  const callBtn = h("button", { class: "callbtn", "aria-label": "Позвонить", html: I.phone, onclick: () => num && call(num) });
   const del = h("button", { class: "pill", style: "display:block;margin:10px auto 0", onclick: () => { num = num.slice(0, -1); disp.textContent = num; } }, "Стереть");
   body.append(disp, pad, callBtn, del, h("div", { class: "section-t" }, "Избранное"), recent);
   let calling = null, ct;
@@ -895,7 +950,7 @@ function Phone(el, api) {
     let s = 0;
     const timer = h("p", {}, "Вызов…");
     calling = h("div", { class: "calling" }, h("div", { class: "av" }, who[0]), h("h3", {}, who), timer,
-      h("button", { class: "callbtn end", style: "margin-top:auto", "aria-label": "Завершить", html: I.phone.replace('fill="#fff"', ""), onclick: end }));
+      h("button", { class: "callbtn end", style: "margin-top:auto", "aria-label": "Завершить", html: I.endcall, onclick: end }));
     el.append(calling);
     ct = setInterval(() => { s++; timer.textContent = s < 3 ? "Вызов…" : `${pad2(Math.floor((s - 3) / 60))}:${pad2((s - 3) % 60)}`; }, 1000);
   }
@@ -965,7 +1020,7 @@ function Messages(el, api) {
 
 /* ===== Calculator ===== */
 function Calculator(el, api) {
-  const histBtn = h("button", { class: "iconbtn", "aria-label": "История", html: '<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg>' });
+  const histBtn = h("button", { class: "iconbtn", "aria-label": "История", html: I.history });
   const seg = h("div", { class: "seg", role: "tablist" });
   const { body, title } = frame(el, api, "", h("div", { style: "display:flex;gap:8px;align-items:center" }, seg, histBtn));
   title.textContent = "";
@@ -1162,7 +1217,7 @@ function Calculator(el, api) {
   const SCI = [["2nd"], ["deg"], ["sin"], ["cos"], ["tan"], ["x²"], ["xʸ"], ["ln"], ["log"], ["√"], ["("], [")"], ["π"], ["e"], ["!"]];
   const BASIC = [["AC", "fn"], ["⌫", "fn"], ["%", "fn"], ["÷", "op"], ["7"], ["8"], ["9"], ["×", "op"], ["4"], ["5"], ["6"], ["−", "op"], ["1"], ["2"], ["3"], ["+", "op"], ["±", "fn"], ["0"], [","], ["=", "eq"]];
   const press = k => { input(k); render(); };
-  const keyBtn = ([k, c = ""]) => h("button", { class: c, "data-k": k, "aria-label": k, onclick: () => press(k) }, k);
+  const keyBtn = ([k, c = ""]) => k === "⌫" ? h("button", { class: c, "data-k": k, "aria-label": "Стереть", html: I.backspace, onclick: () => press(k) }) : h("button", { class: c, "data-k": k, "aria-label": k, onclick: () => press(k) }, k);
   keys.append(...BASIC.map(keyBtn));
   sciBox.append(...SCI.map(keyBtn));
 
@@ -1347,11 +1402,19 @@ function Weather(el, api) {
   const { body } = frame(el, api, "Погода");
   const cities = { "Москва": [14, "Ясно", 17, 6], "Киев": [16, "Переменная облачность", 18, 8], "Сочи": [21, "Солнечно", 24, 15] };
   let city = "Москва";
+  const tint = (svg, c) => svg.replace("<svg", `<svg style="color:${c}"`);
+  const wIcon = (hr, c, n) => {
+    if (hr < 6 || hr >= 21) return tint(I.wmoon, "#c9d6ff");
+    const k = (c.length * 7 + n * 5) % 6;
+    if (c === "Сочи" || k < 2) return tint(I.wsun, "#ffcf4a");
+    if (k < 4) return tint(I.wpartly, "#dbe9f5");
+    return tint(k === 4 ? I.wcloud : I.wrain, "#b7c8d0");
+  };
   const view = h("div"); body.append(view);
   function draw() {
     const [t, c, hi, lo] = cities[city];
-    const hours = Array.from({ length: 10 }, (_, i) => { const hr = (new Date().getHours() + i) % 24; const tt = Math.round(lo + (hi - lo) * Math.sin(Math.PI * Math.max(0, Math.min(1, (hr - 6) / 14)))); return h("div", {}, h("span", {}, i ? pad(hr) : "Сейчас"), h("b", {}, (i ? tt : t) + "°")); });
-    const days = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map((d, i) => { const l = lo - 3 + ((i * 7) % 5), u = hi - 2 + ((i * 3) % 5); return h("div", { class: "row" }, h("b", {}, d), h("span", { class: "rv" }, l + "°"), h("div", { class: "tbar" }, h("i", { style: `left:${(l - 0) * 3}%;right:${100 - u * 3.4}%` })), h("span", { class: "rv" }, u + "°")); });
+    const hours = Array.from({ length: 10 }, (_, i) => { const hr = (new Date().getHours() + i) % 24; const tt = Math.round(lo + (hi - lo) * Math.sin(Math.PI * Math.max(0, Math.min(1, (hr - 6) / 14)))); return h("div", {}, h("span", {}, i ? pad(hr) : "Сейчас"), h("i", { class: "wi", html: wIcon(hr, city, i) }), h("b", {}, (i ? tt : t) + "°")); });
+    const days = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map((d, i) => { const l = lo - 3 + ((i * 7) % 5), u = hi - 2 + ((i * 3) % 5); return h("div", { class: "row" }, h("b", {}, d), h("i", { class: "wi", html: wIcon(13, city, i * 3 + 1) }), h("span", { class: "rv" }, l + "°"), h("div", { class: "tbar" }, h("i", { style: `left:${(l - 0) * 3}%;right:${100 - u * 3.4}%` })), h("span", { class: "rv" }, u + "°")); });
     view.replaceChildren(
       h("div", { class: "pills", style: "margin-bottom:12px" }, Object.keys(cities).map(n => h("button", { class: "pill" + (n === city ? " on" : ""), onclick: () => { city = n; draw(); } }, n))),
       h("div", { class: "wx" }, h("div", { class: "sun" }), h("div", { class: "city" }, city), h("div", { class: "temp" }, t + "°"), h("div", { class: "cond" }, `${c} · Макс ${hi}° Мин ${lo}°`)),
@@ -1429,7 +1492,7 @@ function Music(el, api) {
     tt.textContent = tr.t; ta.textContent = tr.a;
     playBtn.innerHTML = playing ? I.pause : I.play;
     lst.replaceChildren(...tracks.map((x, i) => h("button", { class: "row", onclick: () => { idx = i; step = 0; if (!playing) toggle(); else render(); } },
-      h("div", { class: "ri", style: `background:${x.c}`, html: i === idx && playing ? I.music.replace('fill="#fff"', 'fill="#fff" width="16"') : "" }),
+      h("div", { class: "ri", style: `background:${x.c}`, html: i === idx && playing ? '<span class="eq"><i></i><i></i><i></i></span>' : I.music }),
       h("div", { class: "rt" }, h("b", { style: i === idx ? "color:var(--jade)" : "" }, x.t), h("small", {}, x.a)))));
   }
   function toggle() {
@@ -1460,7 +1523,7 @@ function Snake(el, api) {
   let snake, dir, nextDir, food, loop = null, score = 0, alive = false;
   const D = { u: [0, -1], d: [0, 1], l: [-1, 0], r: [1, 0] };
   const turn = k => { const [x, y] = D[k]; if (x !== -dir[0] || y !== -dir[1]) nextDir = D[k]; if (!alive) start(); };
-  const pad = h("div", { class: "pad" }, ["u", "l", "d", "r"].map(k => h("button", { class: k, "aria-label": k, onclick: () => turn(k) }, { u: "▲", l: "◀", d: "▼", r: "▶" }[k])));
+  const pad = h("div", { class: "pad" }, ["u", "l", "d", "r"].map(k => h("button", { class: k, "aria-label": { u: "Вверх", l: "Влево", d: "Вниз", r: "Вправо" }[k], html: I[{ u: "up", l: "left", d: "down", r: "right" }[k]], onclick: () => turn(k) })));
   body.append(h("div", { class: "snake-wrap" }, h("div", { class: "score" }, h("span", {}, "Счёт ", sc), h("span", {}, "Рекорд ", best)), cv, startBtn, pad));
   const place = () => { do { food = [Math.floor(Math.random() * N), Math.floor(Math.random() * N)]; } while (snake.some(([x, y]) => x === food[0] && y === food[1])); };
   function reset() { snake = [[8, 9], [7, 9], [6, 9]]; dir = D.r; nextDir = D.r; score = 0; sc.textContent = 0; place(); draw(); }
@@ -1509,17 +1572,19 @@ function Files(el, api) {
     "Фото": { "IMG_0001.jpg": "3,4 МБ", "IMG_0002.jpg": "2,9 МБ", "Скриншот.png": "1,1 МБ" },
     "Система": { "niri.kernel": "48 МБ", "aurora.conf": "2 КБ" },
   };
+  const FOLDER = { "Документы": ["#3a6fd0", "doc"], "Загрузки": ["#14806b", "download"], "Музыка": ["#c94a6a", "music"], "Фото": ["#d9773a", "image"], "Система": ["#557070", "gear"] };
+  const fileType = f => ({ pdf: ["#d8463b", "pdf"], docx: ["#3a6fd0", "doc"], txt: ["#6f8285", "doc"], zip: ["#c9921f", "zip"], mid: ["#c94a6a", "music"], jpg: ["#2f9e6a", "image"], png: ["#2f9e6a", "image"], kernel: ["#4a5a60", "gear"], conf: ["#4a5a60", "gear"] })[f.split(".").pop()] || ["#6f8285", "doc"];
   let path = null;
   function draw() {
     title.textContent = path || "Файлы";
     if (!path) {
       body.replaceChildren(h("div", { class: "crumbs" }, "Внутренняя память · 64 ГБ"),
         h("div", { class: "list" }, Object.keys(FS).map(d => h("button", { class: "row", onclick: () => { path = d; draw(); } },
-          h("div", { class: "ri", style: "background:#3a5fb0", html: I.folder }), h("div", { class: "rt" }, h("b", {}, d), h("small", {}, Object.keys(FS[d]).length + " файла")), h("span", { class: "rv" }, "›")))));
+          h("div", { class: "ri", style: `background:${FOLDER[d][0]}`, html: I[FOLDER[d][1]] }), h("div", { class: "rt" }, h("b", {}, d), h("small", {}, Object.keys(FS[d]).length + " файла")), h("span", { class: "chev", html: I.chev })))));
     } else {
       body.replaceChildren(h("div", { class: "crumbs" }, "Память › " + path),
         h("div", { class: "list" }, Object.entries(FS[path]).map(([f, s]) => h("div", { class: "row" },
-          h("div", { class: "ri", style: "background:#557070", html: I.doc }), h("div", { class: "rt" }, h("b", {}, f), h("small", {}, s))))));
+          h("div", { class: "ri", style: `background:${fileType(f)[0]}`, html: I[fileType(f)[1]] }), h("div", { class: "rt" }, h("b", {}, f), h("small", {}, s))))));
     }
   }
   draw();
@@ -1530,16 +1595,16 @@ function Files(el, api) {
 function Explore(el, api) {
   const { body } = frame(el, api, "Обзор");
   const tips = [
-    ["Пункт управления", "Потяните строку состояния сверху вниз. Там Wi-Fi, фонарик, яркость и тема."],
-    ["Недавние приложения", "Нажмите квадрат над полоской внизу или клавишу R. Смахните приложение крестиком."],
-    ["Обои", "Настройки → Оформление: четыре фирменных обоя Niri OS."],
-    ["Помощник Нири", "Напишите Нири в «Сообщениях». Она отвечает на вопросы о системе."],
-    ["Рекорд в «Змейке»", "Лучший счёт сохраняется. Управление стрелками, WASD или свайпами."],
+    ["Пункт управления", "Потяните строку состояния сверху вниз. Там Wi-Fi, фонарик, яркость и тема.", "sliders", "#2369a0"],
+    ["Недавние приложения", "Нажмите квадрат над полоской внизу или клавишу R. Смахните приложение крестиком.", "recentsNav", "#557070"],
+    ["Обои", "Настройки → Оформление: четыре фирменных обоя Niri OS.", "palette", "#c94a6a"],
+    ["Помощник Нири", "Напишите Нири в «Сообщениях». Она отвечает на вопросы о системе.", "chat", "#14806b"],
+    ["Рекорд в «Змейке»", "Лучший счёт сохраняется. Управление стрелками, WASD или свайпами.", "trophy", "#c9921f"],
   ];
   body.append(
     h("div", { class: "wx", style: "background:linear-gradient(150deg,#2fc6a0,#14535a)" }, h("div", { class: "city" }, "Добро пожаловать"), h("div", { class: "temp", style: "font-size:40px;letter-spacing:-0.02em;margin:10px 0" }, "Niri OS 1.0"), h("div", { class: "cond" }, "Что умеет ваш телефон")),
     h("div", { class: "section-t" }, "Советы"),
-    h("div", { class: "list" }, tips.map(([t, d]) => h("div", { class: "row" }, h("div", { class: "ri", style: "background:var(--amber);color:#2b1c00", html: I.info }), h("div", { class: "rt" }, h("b", {}, t), h("small", { style: "white-space:normal" }, d))))),
+    h("div", { class: "list" }, tips.map(([t, d, icn, col]) => h("div", { class: "row" }, h("div", { class: "ri", style: `background:${col}`, html: I[icn] }), h("div", { class: "rt" }, h("b", {}, t), h("small", { style: "white-space:normal" }, d))))),
     h("div", { class: "section-t" }, "Быстрый запуск"),
     h("div", { class: "pills" }, APPS.filter(a => a.id !== "browser").map(a => h("button", { class: "pill", onclick: () => openApp(a.id) }, a.name))));
 }
@@ -1549,7 +1614,7 @@ function Settings(el, api) {
   const { body, title } = frame(el, api, "Настройки");
   let page = null;
   const row = (icon, color, name, sub, right, onclick) => h(onclick ? "button" : "div", { class: "row", onclick },
-    h("div", { class: "ri", style: `background:${color}`, html: I[icon] }), h("div", { class: "rt" }, h("b", {}, name), sub ? h("small", {}, sub) : null), right ?? h("span", { class: "rv" }, "›"));
+    h("div", { class: "ri", style: `background:${color}`, html: I[icon] }), h("div", { class: "rt" }, h("b", {}, name), sub ? h("small", {}, sub) : null), right ?? h("span", { class: "chev", html: I.chev }));
   const sw = (on, fn) => h("span", { class: "switch" + (on ? " on" : ""), role: "switch", "aria-checked": String(on) });
   function main() {
     page = null; title.textContent = "Настройки";
